@@ -99,7 +99,11 @@ afterEvaluate {
         sign publishing.publications.mediaHubRelease
     }
 }
-tasks.withType(PublishToMavenRepository) { it.dependsOn lint, test }
+tasks.withType(PublishToMavenRepository).forEach { task ->
+    if (task.name.contains('mediaHubRelease')) {
+        task.dependsOn lint, test
+    }
+}
 
 task androidSourcesJar(type: Jar) {
     archiveClassifier.set('sources')
