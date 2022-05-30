@@ -72,6 +72,7 @@ afterEvaluate {
                 pom {
                     name = releaseArtifact
                     description = releaseDescription
+                    url = 'https://github.com/mediahub-bg/ExoPlayer'
                     licenses {
                         license {
                             name = 'The Apache Software License, Version 2.0'
