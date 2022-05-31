@@ -123,7 +123,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
   private static final Set<Integer> MAPPABLE_TYPES =
       Collections.unmodifiableSet(
           new HashSet<>(
-              Arrays.asList(C.TRACK_TYPE_AUDIO, C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_METADATA)));
+              Arrays.asList(C.TRACK_TYPE_VIDEO, C.TRACK_TYPE_METADATA)));
 
   private final int trackType;
   private final Callback callback;
