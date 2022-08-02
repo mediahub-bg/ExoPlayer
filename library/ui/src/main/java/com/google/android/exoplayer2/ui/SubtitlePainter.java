@@ -377,13 +377,12 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
   @RequiresNonNull("cueBitmap")
   private void setupBitmapLayout() {
     Bitmap cueBitmap = this.cueBitmap;
-    int offsetX = 0;int maxBitmapHeight = Integer.MIN_VALUE;
+    int offsetX = 0;
     int parentWidth = parentRight - parentLeft;
     if ((cueDisplayWidth <= 720) && (parentWidth > 720)) {
       int origParentWidth = parentWidth;
-      parentWidth = 1280;
+      parentWidth = 1600;
       offsetX = (origParentWidth - parentWidth) / 2;
-      maxBitmapHeight = 76;
     }
     int parentHeight = parentBottom - parentTop;
     float anchorX = parentLeft + (parentWidth * cuePosition);
@@ -394,7 +393,6 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
         cueBitmapHeight != Cue.DIMEN_UNSET
             ? Math.round(parentHeight * cueBitmapHeight)
             : Math.round(width * ((float) cueBitmap.getHeight() / cueBitmap.getWidth()));
-    height = (height <= maxBitmapHeight) ? height : maxBitmapHeight;
     int x =
         Math.round(
             cuePositionAnchor == Cue.ANCHOR_TYPE_END
