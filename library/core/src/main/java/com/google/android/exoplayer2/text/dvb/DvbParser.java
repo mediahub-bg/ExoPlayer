@@ -752,19 +752,38 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
       @Nullable Paint paint,
       Canvas canvas) {
     boolean endOfPixelCodeString = false;
+    boolean eof = false;
     do {
       int runLength = 0;
       int clutIndex = 0;
+      if (data.bitsLeft() < 2) {
+        eof = true;
+        break;
+      }
       int peek = data.readBits(2);
       if (peek != 0x00) {
         runLength = 1;
         clutIndex = peek;
+      } else if (data.bitsLeft() < 1) {
+        eof = true;
+        break;
       } else if (data.readBit()) {
+        if (data.bitsLeft() < 5) {
+          eof = true;
+          break;
+        }
         runLength = 3 + data.readBits(3);
         clutIndex = data.readBits(2);
+      } else if (data.bitsLeft() < 1) {
+        eof = true;
+        break;
       } else if (data.readBit()) {
         runLength = 1;
       } else {
+        if (data.bitsLeft() < 2) {
+          eof = true;
+          break;
+        }
         switch (data.readBits(2)) {
           case 0x00:
             endOfPixelCodeString = true;
@@ -773,14 +792,24 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
             runLength = 2;
             break;
           case 0x02:
+            if (data.bitsLeft() < 6) {
+              eof = true;
+              break;
+            }
             runLength = 12 + data.readBits(4);
             clutIndex = data.readBits(2);
             break;
           case 0x03:
+            if (data.bitsLeft() < 10) {
+              eof = true;
+              break;
+            }
             runLength = 29 + data.readBits(8);
             clutIndex = data.readBits(2);
             break;
         }
+        if (eof)
+          break;
       }
 
       if (runLength != 0 && paint != null) {
@@ -790,6 +819,9 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
       column += runLength;
     } while (!endOfPixelCodeString);
+
+    if (eof)
+      canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
     return column;
   }
@@ -804,13 +836,21 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
       @Nullable Paint paint,
       Canvas canvas) {
     boolean endOfPixelCodeString = false;
+    boolean eof = false;
     do {
       int runLength = 0;
       int clutIndex = 0;
+      if (data.bitsLeft() < 4) {
+        eof = true;
+        break;
+      }
       int peek = data.readBits(4);
       if (peek != 0x00) {
         runLength = 1;
         clutIndex = peek;
+      } else if (data.bitsLeft() < 4) {
+        eof = true;
+        break;
       } else if (!data.readBit()) {
         peek = data.readBits(3);
         if (peek != 0x00) {
@@ -821,6 +861,10 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
         }
       } else if (!data.readBit()) {
         runLength = 4 + data.readBits(2);
+        if (data.bitsLeft() < 4) {
+          eof = true;
+          break;
+        }
         clutIndex = data.readBits(4);
       } else {
         switch (data.readBits(2)) {
@@ -831,14 +875,24 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
             runLength = 2;
             break;
           case 0x02:
+            if (data.bitsLeft() < 8) {
+              eof = true;
+              break;
+            }
             runLength = 9 + data.readBits(4);
             clutIndex = data.readBits(4);
             break;
           case 0x03:
+            if (data.bitsLeft() < 12) {
+              eof = true;
+              break;
+            }
             runLength = 25 + data.readBits(8);
             clutIndex = data.readBits(4);
             break;
         }
+        if (eof)
+          break;
       }
 
       if (runLength != 0 && paint != null) {
@@ -848,6 +902,9 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
 
       column += runLength;
     } while (!endOfPixelCodeString);
+
+    if (eof)
+      canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
 
     return column;
   }
@@ -862,14 +919,23 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
       @Nullable Paint paint,
       Canvas canvas) {
     boolean endOfPixelCodeString = false;
+    boolean eof = false;
     do {
       int runLength = 0;
       int clutIndex = 0;
+      if (data.bitsLeft() < 8) {
+        eof = true;
+        break;
+      }
       int peek = data.readBits(8);
       if (peek != 0x00) {
         runLength = 1;
         clutIndex = peek;
       } else {
+        if (data.bitsLeft() < 8) {
+          eof = true;
+          break;
+        }
         if (!data.readBit()) {
           peek = data.readBits(7);
           if (peek != 0x00) {
@@ -880,6 +946,10 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
           }
         } else {
           runLength = data.readBits(7);
+          if (data.bitsLeft() < 8) {
+            eof = true;
+            break;
+          }
           clutIndex = data.readBits(8);
         }
       }
@@ -891,10 +961,15 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
       column += runLength;
     } while (!endOfPixelCodeString);
 
+    if (eof)
+      canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);
+
     return column;
   }
 
   private static byte[] buildClutMapTable(int length, int bitsPerEntry, ParsableBitArray data) {
+    if (data.bitsLeft() < (length * bitsPerEntry))
+      return null;
     byte[] clutMapTable = new byte[length];
     for (int i = 0; i < length; i++) {
       clutMapTable[i] = (byte) data.readBits(bitsPerEntry);
