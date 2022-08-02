@@ -85,6 +85,8 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
   private int parentTop;
   private int parentRight;
   private int parentBottom;
+  private int cueDisplayWidth;
+  private int cueDisplayHeight;
 
   // Derived drawing variables.
   private @MonotonicNonNull StaticLayout textLayout;
@@ -172,6 +174,8 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
         && Util.areEqual(this.cuePositionAnchor, cue.positionAnchor)
         && this.cueSize == cue.size
         && this.cueBitmapHeight == cue.bitmapHeight
+        && this.cueDisplayWidth == cue.displayWidth
+        && this.cueDisplayHeight == cue.displayHeight
         && this.foregroundColor == style.foregroundColor
         && this.backgroundColor == style.backgroundColor
         && this.windowColor == windowColor
@@ -200,6 +204,8 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
     this.cuePositionAnchor = cue.positionAnchor;
     this.cueSize = cue.size;
     this.cueBitmapHeight = cue.bitmapHeight;
+    this.cueDisplayWidth = cue.displayWidth;
+    this.cueDisplayHeight = cue.displayHeight;
     this.foregroundColor = style.foregroundColor;
     this.backgroundColor = style.backgroundColor;
     this.windowColor = windowColor;
@@ -371,15 +377,24 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
   @RequiresNonNull("cueBitmap")
   private void setupBitmapLayout() {
     Bitmap cueBitmap = this.cueBitmap;
+    int offsetX = 0;int maxBitmapHeight = Integer.MIN_VALUE;
     int parentWidth = parentRight - parentLeft;
+    if ((cueDisplayWidth <= 720) && (parentWidth > 720)) {
+      int origParentWidth = parentWidth;
+      parentWidth = 1280;
+      offsetX = (origParentWidth - parentWidth) / 2;
+      maxBitmapHeight = 76;
+    }
     int parentHeight = parentBottom - parentTop;
     float anchorX = parentLeft + (parentWidth * cuePosition);
+    anchorX += offsetX;
     float anchorY = parentTop + (parentHeight * cueLine);
     int width = Math.round(parentWidth * cueSize);
     int height =
         cueBitmapHeight != Cue.DIMEN_UNSET
             ? Math.round(parentHeight * cueBitmapHeight)
             : Math.round(width * ((float) cueBitmap.getHeight() / cueBitmap.getWidth()));
+    height = (height <= maxBitmapHeight) ? height : maxBitmapHeight;
     int x =
         Math.round(
             cuePositionAnchor == Cue.ANCHOR_TYPE_END

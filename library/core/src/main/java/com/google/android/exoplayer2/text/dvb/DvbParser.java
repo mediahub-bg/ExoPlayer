@@ -240,6 +240,8 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
               .setLineAnchor(Cue.ANCHOR_TYPE_START)
               .setSize((float) regionComposition.width / displayDefinition.width)
               .setBitmapHeight((float) regionComposition.height / displayDefinition.height)
+              .setDisplayWidth(displayDefinition.width + 1)
+              .setDisplayHeight(displayDefinition.height + 1)
               .build());
 
       canvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR);

@@ -279,6 +279,18 @@ public final class Cue implements Bundleable {
   public final float shearDegrees;
 
   /**
+   * Specifies the maximum horizontal width of the display in pixels assumed by the subtitling
+   * stream. The value in this field shall be in the region 1..4096.
+   */
+  public final int displayWidth;
+
+  /**
+   * Specifies the maximum vertical height of the display in pixels assumed by the subtitling
+   * stream. The value in this field shall be in the region 1..4096.
+   */
+  public final int displayHeight;
+
+  /**
    * Creates a text cue whose {@link #textAlignment} is null, whose type parameters are set to
    * {@link #TYPE_UNSET} and whose dimension parameters are set to {@link #DIMEN_UNSET}.
    *
@@ -381,7 +393,9 @@ public final class Cue implements Bundleable {
         /* windowColorSet= */ false,
         /* windowColor= */ Color.BLACK,
         /* verticalType= */ TYPE_UNSET,
-        /* shearDegrees= */ 0f);
+        /* shearDegrees= */ 0f,
+        /* displayWidth= */ Integer.MIN_VALUE,
+        /* displayHeight= */ Integer.MIN_VALUE);
   }
 
   /**
@@ -428,7 +442,9 @@ public final class Cue implements Bundleable {
         windowColorSet,
         windowColor,
         /* verticalType= */ TYPE_UNSET,
-        /* shearDegrees= */ 0f);
+        /* shearDegrees= */ 0f,
+        /* displayWidth= */ Integer.MIN_VALUE,
+        /* displayHeight= */ Integer.MIN_VALUE);
   }
 
   private Cue(
@@ -448,7 +464,9 @@ public final class Cue implements Bundleable {
       boolean windowColorSet,
       int windowColor,
       @VerticalType int verticalType,
-      float shearDegrees) {
+      float shearDegrees,
+      int displayWidth,
+      int displayHeight) {
     // Exactly one of text or bitmap should be set.
     if (text == null) {
       Assertions.checkNotNull(bitmap);
@@ -478,6 +496,8 @@ public final class Cue implements Bundleable {
     this.textSize = textSize;
     this.verticalType = verticalType;
     this.shearDegrees = shearDegrees;
+    this.displayWidth = displayWidth;
+    this.displayHeight = displayHeight;
   }
 
   /** Returns a new {@link Cue.Builder} initialized with the same values as this Cue. */
@@ -556,6 +576,8 @@ public final class Cue implements Bundleable {
     @ColorInt private int windowColor;
     @VerticalType private int verticalType;
     private float shearDegrees;
+    private int displayWidth;
+    private int displayHeight;
 
     public Builder() {
       text = null;
@@ -574,6 +596,8 @@ public final class Cue implements Bundleable {
       windowColorSet = false;
       windowColor = Color.BLACK;
       verticalType = TYPE_UNSET;
+      displayWidth = Integer.MIN_VALUE;
+      displayHeight = Integer.MIN_VALUE;
     }
 
     private Builder(Cue cue) {
@@ -594,6 +618,8 @@ public final class Cue implements Bundleable {
       windowColor = cue.windowColor;
       verticalType = cue.verticalType;
       shearDegrees = cue.shearDegrees;
+      displayWidth = cue.displayWidth;
+      displayHeight = cue.displayHeight;
     }
 
     /**
@@ -916,6 +942,16 @@ public final class Cue implements Bundleable {
       return verticalType;
     }
 
+    public Builder setDisplayWidth(int displayWidth) {
+      this.displayWidth = displayWidth;
+      return this;
+    }
+
+    public Builder setDisplayHeight(int displayHeight) {
+      this.displayHeight = displayHeight;
+      return this;
+    }
+
     /** Build the cue. */
     public Cue build() {
       return new Cue(
@@ -935,7 +971,9 @@ public final class Cue implements Bundleable {
           windowColorSet,
           windowColor,
           verticalType,
-          shearDegrees);
+          shearDegrees,
+          displayWidth,
+          displayHeight);
     }
   }
 
