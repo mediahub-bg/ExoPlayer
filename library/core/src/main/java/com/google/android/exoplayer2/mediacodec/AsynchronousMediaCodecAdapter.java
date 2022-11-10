@@ -16,12 +16,15 @@
 
 package com.google.android.exoplayer2.mediacodec;
 
+import static java.lang.annotation.ElementType.TYPE_USE;
+
 import android.media.MediaCodec;
 import android.media.MediaCrypto;
 import android.media.MediaFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.PersistableBundle;
 import android.view.Surface;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
@@ -35,6 +38,7 @@ import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.nio.ByteBuffer;
 
 /**
@@ -49,52 +53,42 @@ import java.nio.ByteBuffer;
   public static final class Factory implements MediaCodecAdapter.Factory {
     private final Supplier<HandlerThread> callbackThreadSupplier;
     private final Supplier<HandlerThread> queueingThreadSupplier;
-    private final boolean forceQueueingSynchronizationWorkaround;
     private final boolean synchronizeCodecInteractionsWithQueueing;
-
-    /** Creates a factory for the specified {@code trackType}. */
-    public Factory(int trackType) {
-      this(
-          trackType,
-          /* forceQueueingSynchronizationWorkaround= */ false,
-          /* synchronizeCodecInteractionsWithQueueing= */ false);
-    }
+    private final boolean enableImmediateCodecStartAfterFlush;
 
     /**
      * Creates an factory for {@link AsynchronousMediaCodecAdapter} instances.
      *
      * @param trackType One of {@link C#TRACK_TYPE_AUDIO} or {@link C#TRACK_TYPE_VIDEO}. Used for
      *     labelling the internal thread accordingly.
-     * @param forceQueueingSynchronizationWorkaround Whether the queueing synchronization workaround
-     *     will be enabled by default or only for the predefined devices.
      * @param synchronizeCodecInteractionsWithQueueing Whether the adapter should synchronize {@link
      *     MediaCodec} interactions with asynchronous buffer queueing. When {@code true}, codec
      *     interactions will wait until all input buffers pending queueing wil be submitted to the
      *     {@link MediaCodec}.
      */
     public Factory(
-        int trackType,
-        boolean forceQueueingSynchronizationWorkaround,
-        boolean synchronizeCodecInteractionsWithQueueing) {
+        @C.TrackType int trackType,
+        boolean synchronizeCodecInteractionsWithQueueing,
+        boolean enableImmediateCodecStartAfterFlush) {
       this(
           /* callbackThreadSupplier= */ () ->
               new HandlerThread(createCallbackThreadLabel(trackType)),
           /* queueingThreadSupplier= */ () ->
               new HandlerThread(createQueueingThreadLabel(trackType)),
-          forceQueueingSynchronizationWorkaround,
-          synchronizeCodecInteractionsWithQueueing);
+          synchronizeCodecInteractionsWithQueueing,
+          enableImmediateCodecStartAfterFlush);
     }
 
     @VisibleForTesting
     /* package */ Factory(
         Supplier<HandlerThread> callbackThreadSupplier,
         Supplier<HandlerThread> queueingThreadSupplier,
-        boolean forceQueueingSynchronizationWorkaround,
-        boolean synchronizeCodecInteractionsWithQueueing) {
+        boolean synchronizeCodecInteractionsWithQueueing,
+        boolean enableImmediateCodecStartAfterFlush) {
       this.callbackThreadSupplier = callbackThreadSupplier;
       this.queueingThreadSupplier = queueingThreadSupplier;
-      this.forceQueueingSynchronizationWorkaround = forceQueueingSynchronizationWorkaround;
       this.synchronizeCodecInteractionsWithQueueing = synchronizeCodecInteractionsWithQueueing;
+      this.enableImmediateCodecStartAfterFlush = enableImmediateCodecStartAfterFlush;
     }
 
     @Override
@@ -111,8 +105,8 @@ import java.nio.ByteBuffer;
                 codec,
                 callbackThreadSupplier.get(),
                 queueingThreadSupplier.get(),
-                forceQueueingSynchronizationWorkaround,
-                synchronizeCodecInteractionsWithQueueing);
+                synchronizeCodecInteractionsWithQueueing,
+                enableImmediateCodecStartAfterFlush);
         TraceUtil.endSection();
         codecAdapter.initialize(
             configuration.mediaFormat,
@@ -133,6 +127,7 @@ import java.nio.ByteBuffer;
 
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
   @IntDef({STATE_CREATED, STATE_INITIALIZED, STATE_SHUT_DOWN})
   private @interface State {}
 
@@ -144,21 +139,21 @@ import java.nio.ByteBuffer;
   private final AsynchronousMediaCodecCallback asynchronousMediaCodecCallback;
   private final AsynchronousMediaCodecBufferEnqueuer bufferEnqueuer;
   private final boolean synchronizeCodecInteractionsWithQueueing;
+  private final boolean enableImmediateCodecStartAfterFlush;
   private boolean codecReleased;
-  @State private int state;
+  private @State int state;
 
   private AsynchronousMediaCodecAdapter(
       MediaCodec codec,
       HandlerThread callbackThread,
       HandlerThread enqueueingThread,
-      boolean forceQueueingSynchronizationWorkaround,
-      boolean synchronizeCodecInteractionsWithQueueing) {
+      boolean synchronizeCodecInteractionsWithQueueing,
+      boolean enableImmediateCodecStartAfterFlush) {
     this.codec = codec;
     this.asynchronousMediaCodecCallback = new AsynchronousMediaCodecCallback(callbackThread);
-    this.bufferEnqueuer =
-        new AsynchronousMediaCodecBufferEnqueuer(
-            codec, enqueueingThread, forceQueueingSynchronizationWorkaround);
+    this.bufferEnqueuer = new AsynchronousMediaCodecBufferEnqueuer(codec, enqueueingThread);
     this.synchronizeCodecInteractionsWithQueueing = synchronizeCodecInteractionsWithQueueing;
+    this.enableImmediateCodecStartAfterFlush = enableImmediateCodecStartAfterFlush;
     this.state = STATE_CREATED;
   }
 
@@ -235,13 +230,20 @@ import java.nio.ByteBuffer;
   @Override
   public void flush() {
     // The order of calls is important:
-    // First, flush the bufferEnqueuer to stop queueing input buffers.
-    // Second, flush the codec to stop producing available input/output buffers.
-    // Third, flush the callback after flushing the codec so that in-flight callbacks are discarded.
+    // 1. Flush the bufferEnqueuer to stop queueing input buffers.
+    // 2. Flush the codec to stop producing available input/output buffers.
+    // 3. Flush the callback after flushing the codec so that in-flight callbacks are discarded.
     bufferEnqueuer.flush();
     codec.flush();
-    // When flushAsync() is completed, start the codec again.
-    asynchronousMediaCodecCallback.flushAsync(/* onFlushCompleted= */ codec::start);
+    if (enableImmediateCodecStartAfterFlush) {
+      // The asynchronous callback will drop pending callbacks but we can start the codec now.
+      asynchronousMediaCodecCallback.flush(/* codec= */ null);
+      codec.start();
+    } else {
+      // Let the asynchronous callback start the codec in the callback thread after pending
+      // callbacks are handled.
+      asynchronousMediaCodecCallback.flush(codec);
+    }
   }
 
   @Override
@@ -288,6 +290,13 @@ import java.nio.ByteBuffer;
     codec.setVideoScalingMode(scalingMode);
   }
 
+  @Override
+  @RequiresApi(26)
+  public PersistableBundle getMetrics() {
+    maybeBlockOnQueueing();
+    return codec.getMetrics();
+  }
+
   @VisibleForTesting
   /* package */ void onError(MediaCodec.CodecException error) {
     asynchronousMediaCodecCallback.onError(codec, error);
@@ -311,15 +320,15 @@ import java.nio.ByteBuffer;
     }
   }
 
-  private static String createCallbackThreadLabel(int trackType) {
+  private static String createCallbackThreadLabel(@C.TrackType int trackType) {
     return createThreadLabel(trackType, /* prefix= */ "ExoPlayer:MediaCodecAsyncAdapter:");
   }
 
-  private static String createQueueingThreadLabel(int trackType) {
+  private static String createQueueingThreadLabel(@C.TrackType int trackType) {
     return createThreadLabel(trackType, /* prefix= */ "ExoPlayer:MediaCodecQueueingThread:");
   }
 
-  private static String createThreadLabel(int trackType, String prefix) {
+  private static String createThreadLabel(@C.TrackType int trackType, String prefix) {
     StringBuilder labelBuilder = new StringBuilder(prefix);
     if (trackType == C.TRACK_TYPE_AUDIO) {
       labelBuilder.append("Audio");

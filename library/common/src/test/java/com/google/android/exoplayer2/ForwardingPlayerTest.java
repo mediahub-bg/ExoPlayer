@@ -25,7 +25,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import com.google.android.exoplayer2.testutil.StubExoPlayer;
+import com.google.android.exoplayer2.testutil.StubPlayer;
 import com.google.android.exoplayer2.util.FlagSet;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -60,22 +60,6 @@ public class ForwardingPlayerTest {
   }
 
   @Test
-  @SuppressWarnings("deprecation") // Testing backwards compatibility with deprecated method.
-  public void addEventListener_addsForwardingListener() {
-    FakePlayer player = new FakePlayer();
-    Player.EventListener listener1 = mock(Player.EventListener.class);
-    Player.EventListener listener2 = mock(Player.EventListener.class);
-
-    ForwardingPlayer forwardingPlayer = new ForwardingPlayer(player);
-    forwardingPlayer.addListener(listener1);
-    // Add listener1 again.
-    forwardingPlayer.addListener(listener1);
-    forwardingPlayer.addListener(listener2);
-
-    assertThat(player.eventListeners).hasSize(2);
-  }
-
-  @Test
   public void removeListener_removesForwardingListener() {
     FakePlayer player = new FakePlayer();
     Player.Listener listener1 = mock(Player.Listener.class);
@@ -91,25 +75,6 @@ public class ForwardingPlayerTest {
     assertThat(player.listeners).hasSize(1);
     forwardingPlayer.removeListener(listener2);
     assertThat(player.listeners).isEmpty();
-  }
-
-  @Test
-  @SuppressWarnings("deprecation") // Testing backwards compatibility with deprecated method.
-  public void removeEventListener_removesForwardingListener() {
-    FakePlayer player = new FakePlayer();
-    Player.EventListener listener1 = mock(Player.EventListener.class);
-    Player.EventListener listener2 = mock(Player.EventListener.class);
-    ForwardingPlayer forwardingPlayer = new ForwardingPlayer(player);
-    forwardingPlayer.addListener(listener1);
-    forwardingPlayer.addListener(listener2);
-
-    forwardingPlayer.removeListener(listener1);
-    assertThat(player.eventListeners).hasSize(1);
-    // Remove same listener again.
-    forwardingPlayer.removeListener(listener1);
-    assertThat(player.eventListeners).hasSize(1);
-    forwardingPlayer.removeListener(listener2);
-    assertThat(player.eventListeners).isEmpty();
   }
 
   @Test
@@ -142,27 +107,12 @@ public class ForwardingPlayerTest {
   public void forwardingPlayer_overridesAllPlayerMethods() throws Exception {
     // Check with reflection that ForwardingPlayer overrides all Player methods.
     List<Method> methods = getPublicMethods(Player.class);
-    for (int i = 0; i < methods.size(); i++) {
-      Method method = methods.get(i);
+    for (Method method : methods) {
       assertThat(
-              ForwardingPlayer.class.getDeclaredMethod(
-                  method.getName(), method.getParameterTypes()))
-          .isNotNull();
-    }
-  }
-
-  @Test
-  @SuppressWarnings("deprecation") // Testing backwards compatibility with deprecated type.
-  public void forwardingEventListener_overridesAllEventListenerMethods() throws Exception {
-    // Check with reflection that ForwardingListener overrides all Listener methods.
-    Class<?> forwardingListenerClass = getInnerClass("ForwardingEventListener");
-    List<Method> methods = getPublicMethods(Player.EventListener.class);
-    for (int i = 0; i < methods.size(); i++) {
-      Method method = methods.get(i);
-      assertThat(
-              forwardingListenerClass.getDeclaredMethod(
-                  method.getName(), method.getParameterTypes()))
-          .isNotNull();
+              ForwardingPlayer.class
+                  .getDeclaredMethod(method.getName(), method.getParameterTypes())
+                  .getDeclaringClass())
+          .isEqualTo(ForwardingPlayer.class);
     }
   }
 
@@ -171,10 +121,12 @@ public class ForwardingPlayerTest {
     // Check with reflection that ForwardingListener overrides all Listener methods.
     Class<?> forwardingListenerClass = getInnerClass("ForwardingListener");
     List<Method> methods = getPublicMethods(Player.Listener.class);
-    for (int i = 0; i < methods.size(); i++) {
-      Method method = methods.get(i);
-      assertThat(forwardingListenerClass.getMethod(method.getName(), method.getParameterTypes()))
-          .isNotNull();
+    for (Method method : methods) {
+      assertThat(
+              forwardingListenerClass
+                  .getMethod(method.getName(), method.getParameterTypes())
+                  .getDeclaringClass())
+          .isEqualTo(forwardingListenerClass);
     }
   }
 
@@ -213,28 +165,13 @@ public class ForwardingPlayerTest {
     throw new IllegalStateException();
   }
 
-  private static class FakePlayer extends StubExoPlayer {
-
-    @SuppressWarnings("deprecation") // Use of deprecated type for backwards compatibility.
-    private final Set<EventListener> eventListeners = new HashSet<>();
+  private static class FakePlayer extends StubPlayer {
 
     private final Set<Listener> listeners = new HashSet<>();
 
     @Override
-    @SuppressWarnings("deprecation") // Implementing deprecated method.
-    public void addListener(EventListener listener) {
-      eventListeners.add(listener);
-    }
-
-    @Override
     public void addListener(Listener listener) {
       listeners.add(listener);
-    }
-
-    @Override
-    @SuppressWarnings("deprecation") // Implementing deprecated method.
-    public void removeListener(EventListener listener) {
-      eventListeners.remove(listener);
     }
 
     @Override

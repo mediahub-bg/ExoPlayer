@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.audio;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.media.AudioTimestamp;
 import android.media.AudioTrack;
@@ -30,6 +31,7 @@ import com.google.android.exoplayer2.util.Util;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 
 /**
@@ -111,6 +113,7 @@ import java.lang.reflect.Method;
   /** {@link AudioTrack} playback states. */
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
   @IntDef({PLAYSTATE_STOPPED, PLAYSTATE_PAUSED, PLAYSTATE_PLAYING})
   private @interface PlayState {}
   /** @see AudioTrack#PLAYSTATE_STOPPED */
@@ -302,12 +305,12 @@ import java.lang.reflect.Method;
 
     if (!notifiedPositionIncreasing && positionUs > lastPositionUs) {
       notifiedPositionIncreasing = true;
-      long mediaDurationSinceLastPositionUs = C.usToMs(positionUs - lastPositionUs);
+      long mediaDurationSinceLastPositionUs = Util.usToMs(positionUs - lastPositionUs);
       long playoutDurationSinceLastPositionUs =
           Util.getPlayoutDurationForMediaDuration(
               mediaDurationSinceLastPositionUs, audioTrackPlaybackSpeed);
       long playoutStartSystemTimeMs =
-          System.currentTimeMillis() - C.usToMs(playoutDurationSinceLastPositionUs);
+          System.currentTimeMillis() - Util.usToMs(playoutDurationSinceLastPositionUs);
       listener.onPositionAdvancing(playoutStartSystemTimeMs);
     }
 
@@ -357,7 +360,7 @@ import java.lang.reflect.Method;
     boolean hadData = hasData;
     hasData = hasPendingData(writtenFrames);
     if (hadData && !hasData && playState != PLAYSTATE_STOPPED) {
-      listener.onUnderrun(bufferSize, C.usToMs(bufferSizeUs));
+      listener.onUnderrun(bufferSize, Util.usToMs(bufferSizeUs));
     }
 
     return true;
@@ -379,7 +382,7 @@ import java.lang.reflect.Method;
 
   /** Returns the duration of audio that is buffered but unplayed. */
   public long getPendingBufferDurationMs(long writtenFrames) {
-    return C.usToMs(framesToDurationUs(writtenFrames - getPlaybackHeadPosition()));
+    return Util.usToMs(framesToDurationUs(writtenFrames - getPlaybackHeadPosition()));
   }
 
   /** Returns whether the track is in an invalid state and must be recreated. */

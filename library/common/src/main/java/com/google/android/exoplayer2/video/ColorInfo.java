@@ -15,17 +15,23 @@
  */
 package com.google.android.exoplayer2.video;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import static java.lang.annotation.ElementType.TYPE_USE;
+
+import android.os.Bundle;
+import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.util.Util;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Arrays;
 import org.checkerframework.dataflow.qual.Pure;
 
 /** Stores color info. */
-public final class ColorInfo implements Parcelable {
+public final class ColorInfo implements Bundleable {
 
   /**
    * Returns the {@link C.ColorSpace} corresponding to the given ISO color primary code, as per
@@ -33,8 +39,7 @@ public final class ColorInfo implements Parcelable {
    * made.
    */
   @Pure
-  @C.ColorSpace
-  public static int isoColorPrimariesToColorSpace(int isoColorPrimaries) {
+  public static @C.ColorSpace int isoColorPrimariesToColorSpace(int isoColorPrimaries) {
     switch (isoColorPrimaries) {
       case 1:
         return C.COLOR_SPACE_BT709;
@@ -56,8 +61,8 @@ public final class ColorInfo implements Parcelable {
    * mapping can be made.
    */
   @Pure
-  @C.ColorTransfer
-  public static int isoTransferCharacteristicsToColorTransfer(int isoTransferCharacteristics) {
+  public static @C.ColorTransfer int isoTransferCharacteristicsToColorTransfer(
+      int isoTransferCharacteristics) {
     switch (isoTransferCharacteristics) {
       case 1: // BT.709.
       case 6: // SMPTE 170M.
@@ -76,20 +81,20 @@ public final class ColorInfo implements Parcelable {
    * The color space of the video. Valid values are {@link C#COLOR_SPACE_BT601}, {@link
    * C#COLOR_SPACE_BT709}, {@link C#COLOR_SPACE_BT2020} or {@link Format#NO_VALUE} if unknown.
    */
-  @C.ColorSpace public final int colorSpace;
+  public final @C.ColorSpace int colorSpace;
 
   /**
    * The color range of the video. Valid values are {@link C#COLOR_RANGE_LIMITED}, {@link
    * C#COLOR_RANGE_FULL} or {@link Format#NO_VALUE} if unknown.
    */
-  @C.ColorRange public final int colorRange;
+  public final @C.ColorRange int colorRange;
 
   /**
    * The color transfer characteristics of the video. Valid values are {@link C#COLOR_TRANSFER_HLG},
    * {@link C#COLOR_TRANSFER_ST2084}, {@link C#COLOR_TRANSFER_SDR} or {@link Format#NO_VALUE} if
    * unknown.
    */
-  @C.ColorTransfer public final int colorTransfer;
+  public final @C.ColorTransfer int colorTransfer;
 
   /** HdrStaticInfo as defined in CTA-861.3, or null if none specified. */
   @Nullable public final byte[] hdrStaticInfo;
@@ -116,16 +121,6 @@ public final class ColorInfo implements Parcelable {
     this.hdrStaticInfo = hdrStaticInfo;
   }
 
-  @SuppressWarnings("ResourceType")
-  /* package */ ColorInfo(Parcel in) {
-    colorSpace = in.readInt();
-    colorRange = in.readInt();
-    colorTransfer = in.readInt();
-    boolean hasHdrStaticInfo = Util.readBoolean(in);
-    hdrStaticInfo = hasHdrStaticInfo ? in.createByteArray() : null;
-  }
-
-  // Parcelable implementation.
   @Override
   public boolean equals(@Nullable Object obj) {
     if (this == obj) {
@@ -167,32 +162,43 @@ public final class ColorInfo implements Parcelable {
     return hashCode;
   }
 
-  @Override
-  public int describeContents() {
-    return 0;
-  }
+  // Bundleable implementation
+
+  @Documented
+  @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
+  @IntDef({
+    FIELD_COLOR_SPACE,
+    FIELD_COLOR_RANGE,
+    FIELD_COLOR_TRANSFER,
+    FIELD_HDR_STATIC_INFO,
+  })
+  private @interface FieldNumber {}
+
+  private static final int FIELD_COLOR_SPACE = 0;
+  private static final int FIELD_COLOR_RANGE = 1;
+  private static final int FIELD_COLOR_TRANSFER = 2;
+  private static final int FIELD_HDR_STATIC_INFO = 3;
 
   @Override
-  public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(colorSpace);
-    dest.writeInt(colorRange);
-    dest.writeInt(colorTransfer);
-    Util.writeBoolean(dest, hdrStaticInfo != null);
-    if (hdrStaticInfo != null) {
-      dest.writeByteArray(hdrStaticInfo);
-    }
+  public Bundle toBundle() {
+    Bundle bundle = new Bundle();
+    bundle.putInt(keyForField(FIELD_COLOR_SPACE), colorSpace);
+    bundle.putInt(keyForField(FIELD_COLOR_RANGE), colorRange);
+    bundle.putInt(keyForField(FIELD_COLOR_TRANSFER), colorTransfer);
+    bundle.putByteArray(keyForField(FIELD_HDR_STATIC_INFO), hdrStaticInfo);
+    return bundle;
   }
 
-  public static final Parcelable.Creator<ColorInfo> CREATOR =
-      new Parcelable.Creator<ColorInfo>() {
-        @Override
-        public ColorInfo createFromParcel(Parcel in) {
-          return new ColorInfo(in);
-        }
+  public static final Creator<ColorInfo> CREATOR =
+      bundle ->
+          new ColorInfo(
+              bundle.getInt(keyForField(FIELD_COLOR_SPACE), Format.NO_VALUE),
+              bundle.getInt(keyForField(FIELD_COLOR_RANGE), Format.NO_VALUE),
+              bundle.getInt(keyForField(FIELD_COLOR_TRANSFER), Format.NO_VALUE),
+              bundle.getByteArray(keyForField(FIELD_HDR_STATIC_INFO)));
 
-        @Override
-        public ColorInfo[] newArray(int size) {
-          return new ColorInfo[size];
-        }
-      };
+  private static String keyForField(@FieldNumber int field) {
+    return Integer.toString(field, Character.MAX_RADIX);
+  }
 }

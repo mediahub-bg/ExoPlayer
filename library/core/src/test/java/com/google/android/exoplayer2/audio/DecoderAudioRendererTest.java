@@ -17,6 +17,7 @@ package com.google.android.exoplayer2.audio;
 
 import static com.google.android.exoplayer2.C.FORMAT_HANDLED;
 import static com.google.android.exoplayer2.RendererCapabilities.ADAPTIVE_NOT_SEAMLESS;
+import static com.google.android.exoplayer2.RendererCapabilities.DECODER_SUPPORT_PRIMARY;
 import static com.google.android.exoplayer2.RendererCapabilities.TUNNELING_NOT_SUPPORTED;
 import static com.google.android.exoplayer2.RendererCapabilities.TUNNELING_SUPPORTED;
 import static com.google.android.exoplayer2.testutil.FakeSampleStream.FakeSampleStreamItem.END_OF_STREAM_ITEM;
@@ -30,13 +31,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.RendererConfiguration;
+import com.google.android.exoplayer2.analytics.PlayerId;
+import com.google.android.exoplayer2.decoder.CryptoConfig;
 import com.google.android.exoplayer2.decoder.DecoderException;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.decoder.SimpleDecoder;
-import com.google.android.exoplayer2.decoder.SimpleOutputBuffer;
+import com.google.android.exoplayer2.decoder.SimpleDecoderOutputBuffer;
 import com.google.android.exoplayer2.drm.DrmSessionEventListener;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
 import com.google.android.exoplayer2.testutil.FakeSampleStream;
 import com.google.android.exoplayer2.upstream.DefaultAllocator;
 import com.google.android.exoplayer2.util.MimeTypes;
@@ -69,13 +71,12 @@ public class DecoderAudioRendererTest {
           }
 
           @Override
-          @C.FormatSupport
-          protected int supportsFormatInternal(Format format) {
+          protected @C.FormatSupport int supportsFormatInternal(Format format) {
             return FORMAT_HANDLED;
           }
 
           @Override
-          protected FakeDecoder createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto) {
+          protected FakeDecoder createDecoder(Format format, @Nullable CryptoConfig cryptoConfig) {
             return new FakeDecoder();
           }
 
@@ -84,13 +85,18 @@ public class DecoderAudioRendererTest {
             return FORMAT;
           }
         };
+    audioRenderer.init(/* index= */ 0, PlayerId.UNSET);
   }
 
   @Config(sdk = 19)
   @Test
   public void supportsFormatAtApi19() {
     assertThat(audioRenderer.supportsFormat(FORMAT))
-        .isEqualTo(ADAPTIVE_NOT_SEAMLESS | TUNNELING_NOT_SUPPORTED | FORMAT_HANDLED);
+        .isEqualTo(
+            ADAPTIVE_NOT_SEAMLESS
+                | TUNNELING_NOT_SUPPORTED
+                | FORMAT_HANDLED
+                | DECODER_SUPPORT_PRIMARY);
   }
 
   @Config(sdk = 21)
@@ -98,7 +104,8 @@ public class DecoderAudioRendererTest {
   public void supportsFormatAtApi21() {
     // From API 21, tunneling is supported.
     assertThat(audioRenderer.supportsFormat(FORMAT))
-        .isEqualTo(ADAPTIVE_NOT_SEAMLESS | TUNNELING_SUPPORTED | FORMAT_HANDLED);
+        .isEqualTo(
+            ADAPTIVE_NOT_SEAMLESS | TUNNELING_SUPPORTED | FORMAT_HANDLED | DECODER_SUPPORT_PRIMARY);
   }
 
   @Test
@@ -133,10 +140,10 @@ public class DecoderAudioRendererTest {
   }
 
   private static final class FakeDecoder
-      extends SimpleDecoder<DecoderInputBuffer, SimpleOutputBuffer, DecoderException> {
+      extends SimpleDecoder<DecoderInputBuffer, SimpleDecoderOutputBuffer, DecoderException> {
 
     public FakeDecoder() {
-      super(new DecoderInputBuffer[1], new SimpleOutputBuffer[1]);
+      super(new DecoderInputBuffer[1], new SimpleDecoderOutputBuffer[1]);
     }
 
     @Override
@@ -150,8 +157,8 @@ public class DecoderAudioRendererTest {
     }
 
     @Override
-    protected SimpleOutputBuffer createOutputBuffer() {
-      return new SimpleOutputBuffer(this::releaseOutputBuffer);
+    protected SimpleDecoderOutputBuffer createOutputBuffer() {
+      return new SimpleDecoderOutputBuffer(this::releaseOutputBuffer);
     }
 
     @Override
@@ -161,7 +168,7 @@ public class DecoderAudioRendererTest {
 
     @Override
     protected DecoderException decode(
-        DecoderInputBuffer inputBuffer, SimpleOutputBuffer outputBuffer, boolean reset) {
+        DecoderInputBuffer inputBuffer, SimpleDecoderOutputBuffer outputBuffer, boolean reset) {
       if (inputBuffer.isEndOfStream()) {
         outputBuffer.setFlags(C.BUFFER_FLAG_END_OF_STREAM);
       }

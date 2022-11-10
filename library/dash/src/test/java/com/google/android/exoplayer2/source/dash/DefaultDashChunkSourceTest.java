@@ -26,6 +26,7 @@ import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.source.LoadEventInfo;
 import com.google.android.exoplayer2.source.MediaLoadData;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -45,6 +46,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.LoaderErrorThrower;
 import com.google.android.exoplayer2.util.Assertions;
+import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -55,12 +57,10 @@ import java.util.List;
 import java.util.Random;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.internal.DoNotInstrument;
 import org.robolectric.shadows.ShadowSystemClock;
 
 /** Unit test for {@link DefaultDashChunkSource}. */
 @RunWith(AndroidJUnit4.class)
-@DoNotInstrument
 public class DefaultDashChunkSourceTest {
 
   private static final String SAMPLE_MPD_LIVE_WITH_OFFSET_INSIDE_WINDOW =
@@ -96,9 +96,10 @@ public class DefaultDashChunkSourceTest {
             /* maxSegmentsPerLoad= */ 1,
             /* enableEventMessageTrack= */ false,
             /* closedCaptionFormats */ ImmutableList.of(),
-            /* playerTrackEmsgHandler= */ null);
+            /* playerTrackEmsgHandler= */ null,
+            PlayerId.UNSET);
 
-    long nowInPeriodUs = C.msToUs(nowMs - manifest.availabilityStartTimeMs);
+    long nowInPeriodUs = Util.msToUs(nowMs - manifest.availabilityStartTimeMs);
     ChunkHolder output = new ChunkHolder();
 
     chunkSource.getNextChunk(
@@ -144,7 +145,8 @@ public class DefaultDashChunkSourceTest {
             /* maxSegmentsPerLoad= */ 1,
             /* enableEventMessageTrack= */ false,
             /* closedCaptionFormats */ ImmutableList.of(),
-            /* playerTrackEmsgHandler= */ null);
+            /* playerTrackEmsgHandler= */ null,
+            PlayerId.UNSET);
 
     ChunkHolder output = new ChunkHolder();
     chunkSource.getNextChunk(
@@ -327,7 +329,8 @@ public class DefaultDashChunkSourceTest {
         /* maxSegmentsPerLoad= */ 1,
         /* enableEventMessageTrack= */ false,
         /* closedCaptionFormats */ ImmutableList.of(),
-        /* playerTrackEmsgHandler= */ null);
+        /* playerTrackEmsgHandler= */ null,
+        PlayerId.UNSET);
   }
 
   private LoadErrorHandlingPolicy.LoadErrorInfo createFakeLoadErrorInfo(

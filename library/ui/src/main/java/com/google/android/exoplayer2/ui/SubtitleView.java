@@ -16,6 +16,7 @@
  */
 package com.google.android.exoplayer2.ui;
 
+import static java.lang.annotation.ElementType.TYPE_USE;
 import static java.lang.annotation.RetentionPolicy.SOURCE;
 
 import android.content.Context;
@@ -30,17 +31,18 @@ import android.widget.FrameLayout;
 import androidx.annotation.Dimension;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.text.Cue;
-import com.google.android.exoplayer2.text.TextOutput;
 import com.google.android.exoplayer2.util.Util;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /** A view for displaying subtitle {@link Cue}s. */
-public final class SubtitleView extends FrameLayout implements TextOutput {
+public final class SubtitleView extends FrameLayout implements Player.Listener {
 
   /**
    * An output for displaying subtitles.
@@ -111,6 +113,7 @@ public final class SubtitleView extends FrameLayout implements TextOutput {
    */
   @Documented
   @Retention(SOURCE)
+  @Target(TYPE_USE)
   @IntDef({VIEW_TYPE_CANVAS, VIEW_TYPE_WEB})
   public @interface ViewType {}
 
@@ -163,7 +166,7 @@ public final class SubtitleView extends FrameLayout implements TextOutput {
   }
 
   /**
-   * Set the type of {@link View} used to display subtitles.
+   * Sets the type of {@link View} used to display subtitles.
    *
    * <p>NOTE: {@link #VIEW_TYPE_WEB} is currently very experimental, and doesn't support most
    * styling and layout properties of {@link Cue}.
@@ -198,7 +201,7 @@ public final class SubtitleView extends FrameLayout implements TextOutput {
   }
 
   /**
-   * Set the text size to a given unit and value.
+   * Sets the text size to a given unit and value.
    *
    * <p>See {@link TypedValue} for the possible dimension units.
    *

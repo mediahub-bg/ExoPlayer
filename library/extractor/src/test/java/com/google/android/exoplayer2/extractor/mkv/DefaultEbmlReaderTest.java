@@ -27,11 +27,9 @@ import java.util.Arrays;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.robolectric.annotation.internal.DoNotInstrument;
 
 /** Tests {@link DefaultEbmlReader}. */
 @RunWith(AndroidJUnit4.class)
-@DoNotInstrument
 public class DefaultEbmlReaderTest {
 
   @Test
@@ -180,8 +178,7 @@ public class DefaultEbmlReaderTest {
     private final List<String> events = new ArrayList<>();
 
     @Override
-    @EbmlProcessor.ElementType
-    public int getElementType(int id) {
+    public @EbmlProcessor.ElementType int getElementType(int id) {
       switch (id) {
         case ID_EBML:
         case ID_SEGMENT:

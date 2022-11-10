@@ -55,12 +55,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
-import org.robolectric.annotation.internal.DoNotInstrument;
 import org.robolectric.shadows.ShadowLog;
 
 /** Tests {@link DownloadManager}. */
 @RunWith(AndroidJUnit4.class)
-@DoNotInstrument
 public class DownloadManagerDashTest {
 
   private static final int ASSERT_TRUE_TIMEOUT_MS = 5000;
@@ -111,8 +109,7 @@ public class DownloadManagerDashTest {
     testThread.release();
   }
 
-  // Disabled due to flakiness.
-  @Ignore
+  @Ignore("Disabled due to flakiness")
   @Test
   public void saveAndLoadActionFile() throws Throwable {
     // Configure fakeDataSet to block until interrupted when TEST_MPD is read.

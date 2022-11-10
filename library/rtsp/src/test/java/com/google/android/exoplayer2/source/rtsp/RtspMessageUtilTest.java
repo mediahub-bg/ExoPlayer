@@ -17,6 +17,7 @@
 package com.google.android.exoplayer2.source.rtsp;
 
 import static com.google.common.truth.Truth.assertThat;
+import static org.junit.Assert.assertThrows;
 
 import android.net.Uri;
 import androidx.annotation.Nullable;
@@ -336,6 +337,52 @@ public final class RtspMessageUtilTest {
   }
 
   @Test
+  public void serialize_requestWithoutCseqHeader_throwsIllegalArgumentException() {
+    RtspRequest request =
+        new RtspRequest(
+            Uri.parse("rtsp://127.0.0.1/test.mkv/track1"),
+            RtspRequest.METHOD_OPTIONS,
+            RtspHeaders.EMPTY,
+            /* messageBody= */ "");
+
+    assertThrows(IllegalArgumentException.class, () -> RtspMessageUtil.serializeRequest(request));
+  }
+
+  @Test
+  public void serialize_responseWithoutCseqHeader_throwsIllegalArgumentException() {
+    RtspResponse response = new RtspResponse(/* status= */ 200, RtspHeaders.EMPTY);
+
+    assertThrows(IllegalArgumentException.class, () -> RtspMessageUtil.serializeResponse(response));
+  }
+
+  @Test
+  public void isRtspResponse_withSuccessfulRtspResponse_returnsTrue() {
+    List<String> responseLines =
+        Arrays.asList(
+            "RTSP/1.0 200 OK",
+            "CSeq: 2",
+            "Public: OPTIONS, DESCRIBE, SETUP, TEARDOWN, PLAY, PAUSE, GET_PARAMETER, SET_PARAMETER",
+            "");
+
+    assertThat(RtspMessageUtil.isRtspResponse(responseLines)).isTrue();
+  }
+
+  @Test
+  public void isRtspResponse_withUnsuccessfulRtspResponse_returnsTrue() {
+    List<String> responseLines = Arrays.asList("RTSP/1.0 405 Method Not Allowed", "CSeq: 2", "");
+
+    assertThat(RtspMessageUtil.isRtspResponse(responseLines)).isTrue();
+  }
+
+  @Test
+  public void isRtspResponse_withRtspRequest_returnsFalse() {
+    List<String> requestLines =
+        Arrays.asList("OPTIONS rtsp://localhost:554/foo.bar RTSP/1.0", "CSeq: 2", "");
+
+    assertThat(RtspMessageUtil.isRtspResponse(requestLines)).isFalse();
+  }
+
+  @Test
   public void serialize_failedResponse_succeeds() {
     RtspResponse response =
         new RtspResponse(
@@ -492,10 +539,10 @@ public final class RtspMessageUtilTest {
   public void parseWWWAuthenticateHeader_withDigestAuthentication_succeeds() throws Exception {
     RtspAuthenticationInfo authenticationInfo =
         RtspMessageUtil.parseWwwAuthenticateHeader(
-            "Digest realm=\"LIVE555 Streaming Media\", nonce=\"0cdfe9719e7373b7d5bb2913e2115f3f\"");
+            "Digest realm=\"RTSP server\", nonce=\"0cdfe9719e7373b7d5bb2913e2115f3f\"");
     assertThat(authenticationInfo.authenticationMechanism).isEqualTo(RtspAuthenticationInfo.DIGEST);
     assertThat(authenticationInfo.nonce).isEqualTo("0cdfe9719e7373b7d5bb2913e2115f3f");
-    assertThat(authenticationInfo.realm).isEqualTo("LIVE555 Streaming Media");
+    assertThat(authenticationInfo.realm).isEqualTo("RTSP server");
     assertThat(authenticationInfo.opaque).isEmpty();
   }
 

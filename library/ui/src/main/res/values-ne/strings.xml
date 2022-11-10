@@ -46,13 +46,15 @@
   <string name="exo_controls_cc_enabled_description">सबटाइटलहरू असक्षम पार्नुहोस्</string>
   <string name="exo_controls_cc_disabled_description">सबटाइटलहरू सक्षम पार्नुहोस्</string>
   <string name="exo_controls_playback_speed">गति</string>
-  <string name="exo_controls_playback_speed_normal">सामान्य</string>
-  <string name="exo_download_description">डाउनलोड गर्नुहोस्</string>
-  <string name="exo_download_notification_channel_name">डाउनलोडहरू</string>
-  <string name="exo_download_downloading">डाउनलोड गरिँदै छ</string>
-  <string name="exo_download_completed">डाउनलोड सम्पन्न भयो</string>
-  <string name="exo_download_failed">डाउनलोड गर्न सकिएन</string>
-  <string name="exo_download_removing">डाउनलोडहरू हटाउँदै</string>
+  <string-array name="exo_controls_playback_speeds">
+    <item>०.२५ गुणा</item>
+    <item>०.५ गुणा</item>
+    <item>०.७५ गुणा</item>
+    <item>सामान्य</item>
+    <item>१.२५ गुणा</item>
+    <item>१.५ गुणा</item>
+    <item>२ गुणा</item>
+  </string-array>
   <string name="exo_track_selection_title_video">भिडियो</string>
   <string name="exo_track_selection_title_audio">अडियो</string>
   <string name="exo_track_selection_title_text">पाठ</string>

@@ -17,11 +17,14 @@ package com.google.android.exoplayer2.source.dash;
 
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.android.exoplayer2.util.Assertions.checkState;
+import static com.google.android.exoplayer2.util.Util.constrainValue;
+import static com.google.android.exoplayer2.util.Util.usToMs;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.SparseArray;
@@ -59,7 +62,6 @@ import com.google.android.exoplayer2.source.dash.manifest.UtcTimingElement;
 import com.google.android.exoplayer2.upstream.Allocator;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
-import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.upstream.LoadErrorHandlingPolicy.LoadErrorInfo;
 import com.google.android.exoplayer2.upstream.Loader;
@@ -81,7 +83,6 @@ import java.io.InputStreamReader;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -96,20 +97,17 @@ public final class DashMediaSource extends BaseMediaSource {
   }
 
   /** Factory for {@link DashMediaSource}s. */
+  @SuppressWarnings("deprecation") // Implement deprecated type for backwards compatibility.
   public static final class Factory implements MediaSourceFactory {
 
     private final DashChunkSource.Factory chunkSourceFactory;
     @Nullable private final DataSource.Factory manifestDataSourceFactory;
 
-    private boolean usingCustomDrmSessionManagerProvider;
     private DrmSessionManagerProvider drmSessionManagerProvider;
     private CompositeSequenceableLoaderFactory compositeSequenceableLoaderFactory;
     private LoadErrorHandlingPolicy loadErrorHandlingPolicy;
-    private long targetLiveOffsetOverrideMs;
     private long fallbackTargetLiveOffsetMs;
     @Nullable private ParsingLoadable.Parser<? extends DashManifest> manifestParser;
-    private List<StreamKey> streamKeys;
-    @Nullable private Object tag;
 
     /**
      * Creates a new factory for {@link DashMediaSource}s.
@@ -137,72 +135,17 @@ public final class DashMediaSource extends BaseMediaSource {
       this.manifestDataSourceFactory = manifestDataSourceFactory;
       drmSessionManagerProvider = new DefaultDrmSessionManagerProvider();
       loadErrorHandlingPolicy = new DefaultLoadErrorHandlingPolicy();
-      targetLiveOffsetOverrideMs = C.TIME_UNSET;
       fallbackTargetLiveOffsetMs = DEFAULT_FALLBACK_TARGET_LIVE_OFFSET_MS;
       compositeSequenceableLoaderFactory = new DefaultCompositeSequenceableLoaderFactory();
-      streamKeys = Collections.emptyList();
-    }
-
-    /**
-     * @deprecated Use {@link MediaItem.Builder#setTag(Object)} and {@link
-     *     #createMediaSource(MediaItem)} instead.
-     */
-    @Deprecated
-    public Factory setTag(@Nullable Object tag) {
-      this.tag = tag;
-      return this;
-    }
-
-    /**
-     * @deprecated Use {@link MediaItem.Builder#setStreamKeys(List)} and {@link
-     *     #createMediaSource(MediaItem)} instead.
-     */
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public Factory setStreamKeys(@Nullable List<StreamKey> streamKeys) {
-      this.streamKeys = streamKeys != null ? streamKeys : Collections.emptyList();
-      return this;
     }
 
     @Override
     public Factory setDrmSessionManagerProvider(
         @Nullable DrmSessionManagerProvider drmSessionManagerProvider) {
-      if (drmSessionManagerProvider != null) {
-        this.drmSessionManagerProvider = drmSessionManagerProvider;
-        this.usingCustomDrmSessionManagerProvider = true;
-      } else {
-        this.drmSessionManagerProvider = new DefaultDrmSessionManagerProvider();
-        this.usingCustomDrmSessionManagerProvider = false;
-      }
-      return this;
-    }
-
-    @Override
-    public Factory setDrmSessionManager(@Nullable DrmSessionManager drmSessionManager) {
-      if (drmSessionManager == null) {
-        setDrmSessionManagerProvider(null);
-      } else {
-        setDrmSessionManagerProvider(unusedMediaItem -> drmSessionManager);
-      }
-      return this;
-    }
-
-    @Override
-    public Factory setDrmHttpDataSourceFactory(
-        @Nullable HttpDataSource.Factory drmHttpDataSourceFactory) {
-      if (!usingCustomDrmSessionManagerProvider) {
-        ((DefaultDrmSessionManagerProvider) drmSessionManagerProvider)
-            .setDrmHttpDataSourceFactory(drmHttpDataSourceFactory);
-      }
-      return this;
-    }
-
-    @Override
-    public Factory setDrmUserAgent(@Nullable String userAgent) {
-      if (!usingCustomDrmSessionManagerProvider) {
-        ((DefaultDrmSessionManagerProvider) drmSessionManagerProvider).setDrmUserAgent(userAgent);
-      }
+      this.drmSessionManagerProvider =
+          drmSessionManagerProvider != null
+              ? drmSessionManagerProvider
+              : new DefaultDrmSessionManagerProvider();
       return this;
     }
 
@@ -219,20 +162,6 @@ public final class DashMediaSource extends BaseMediaSource {
           loadErrorHandlingPolicy != null
               ? loadErrorHandlingPolicy
               : new DefaultLoadErrorHandlingPolicy();
-      return this;
-    }
-
-    /**
-     * @deprecated Use {@link MediaItem.Builder#setLiveTargetOffsetMs(long)} to override the
-     *     manifest, or {@link #setFallbackTargetLiveOffsetMs(long)} to provide a fallback value.
-     */
-    @Deprecated
-    public Factory setLivePresentationDelayMs(
-        long livePresentationDelayMs, boolean overridesManifest) {
-      targetLiveOffsetOverrideMs = overridesManifest ? livePresentationDelayMs : C.TIME_UNSET;
-      if (!overridesManifest) {
-        setFallbackTargetLiveOffsetMs(livePresentationDelayMs);
-      }
       return this;
     }
 
@@ -296,8 +225,6 @@ public final class DashMediaSource extends BaseMediaSource {
               .setUri(Uri.EMPTY)
               .setMediaId(DEFAULT_MEDIA_ID)
               .setMimeType(MimeTypes.APPLICATION_MPD)
-              .setStreamKeys(streamKeys)
-              .setTag(tag)
               .build());
     }
 
@@ -312,28 +239,12 @@ public final class DashMediaSource extends BaseMediaSource {
      */
     public DashMediaSource createMediaSource(DashManifest manifest, MediaItem mediaItem) {
       Assertions.checkArgument(!manifest.dynamic);
-      List<StreamKey> streamKeys =
-          mediaItem.playbackProperties != null && !mediaItem.playbackProperties.streamKeys.isEmpty()
-              ? mediaItem.playbackProperties.streamKeys
-              : this.streamKeys;
-      if (!streamKeys.isEmpty()) {
-        manifest = manifest.copy(streamKeys);
+      MediaItem.Builder mediaItemBuilder =
+          mediaItem.buildUpon().setMimeType(MimeTypes.APPLICATION_MPD);
+      if (mediaItem.localConfiguration == null) {
+        mediaItemBuilder.setUri(Uri.EMPTY);
       }
-      boolean hasUri = mediaItem.playbackProperties != null;
-      boolean hasTag = hasUri && mediaItem.playbackProperties.tag != null;
-      boolean hasTargetLiveOffset = mediaItem.liveConfiguration.targetOffsetMs != C.TIME_UNSET;
-      mediaItem =
-          mediaItem
-              .buildUpon()
-              .setMimeType(MimeTypes.APPLICATION_MPD)
-              .setUri(hasUri ? mediaItem.playbackProperties.uri : Uri.EMPTY)
-              .setTag(hasTag ? mediaItem.playbackProperties.tag : tag)
-              .setLiveTargetOffsetMs(
-                  hasTargetLiveOffset
-                      ? mediaItem.liveConfiguration.targetOffsetMs
-                      : targetLiveOffsetOverrideMs)
-              .setStreamKeys(streamKeys)
-              .build();
+      mediaItem = mediaItemBuilder.build();
       return new DashMediaSource(
           mediaItem,
           manifest,
@@ -346,60 +257,25 @@ public final class DashMediaSource extends BaseMediaSource {
           fallbackTargetLiveOffsetMs);
     }
 
-    /** @deprecated Use {@link #createMediaSource(MediaItem)} instead. */
-    @SuppressWarnings("deprecation")
-    @Deprecated
-    @Override
-    public DashMediaSource createMediaSource(Uri uri) {
-      return createMediaSource(
-          new MediaItem.Builder()
-              .setUri(uri)
-              .setMimeType(MimeTypes.APPLICATION_MPD)
-              .setTag(tag)
-              .build());
-    }
-
     /**
      * Returns a new {@link DashMediaSource} using the current parameters.
      *
      * @param mediaItem The media item of the dash stream.
      * @return The new {@link DashMediaSource}.
-     * @throws NullPointerException if {@link MediaItem#playbackProperties} is {@code null}.
+     * @throws NullPointerException if {@link MediaItem#localConfiguration} is {@code null}.
      */
     @Override
     public DashMediaSource createMediaSource(MediaItem mediaItem) {
-      checkNotNull(mediaItem.playbackProperties);
+      checkNotNull(mediaItem.localConfiguration);
       @Nullable ParsingLoadable.Parser<? extends DashManifest> manifestParser = this.manifestParser;
       if (manifestParser == null) {
         manifestParser = new DashManifestParser();
       }
-      List<StreamKey> streamKeys =
-          mediaItem.playbackProperties.streamKeys.isEmpty()
-              ? this.streamKeys
-              : mediaItem.playbackProperties.streamKeys;
+      List<StreamKey> streamKeys = mediaItem.localConfiguration.streamKeys;
       if (!streamKeys.isEmpty()) {
         manifestParser = new FilteringManifestParser<>(manifestParser, streamKeys);
       }
 
-      boolean needsTag = mediaItem.playbackProperties.tag == null && tag != null;
-      boolean needsStreamKeys =
-          mediaItem.playbackProperties.streamKeys.isEmpty() && !streamKeys.isEmpty();
-      boolean needsTargetLiveOffset =
-          mediaItem.liveConfiguration.targetOffsetMs == C.TIME_UNSET
-              && targetLiveOffsetOverrideMs != C.TIME_UNSET;
-      if (needsTag || needsStreamKeys || needsTargetLiveOffset) {
-        MediaItem.Builder builder = mediaItem.buildUpon();
-        if (needsTag) {
-          builder.setTag(tag);
-        }
-        if (needsStreamKeys) {
-          builder.setStreamKeys(streamKeys);
-        }
-        if (needsTargetLiveOffset) {
-          builder.setLiveTargetOffsetMs(targetLiveOffsetOverrideMs);
-        }
-        mediaItem = builder.build();
-      }
       return new DashMediaSource(
           mediaItem,
           /* manifest= */ null,
@@ -493,8 +369,8 @@ public final class DashMediaSource extends BaseMediaSource {
       long fallbackTargetLiveOffsetMs) {
     this.mediaItem = mediaItem;
     this.liveConfiguration = mediaItem.liveConfiguration;
-    this.manifestUri = checkNotNull(mediaItem.playbackProperties).uri;
-    this.initialManifestUri = mediaItem.playbackProperties.uri;
+    this.manifestUri = checkNotNull(mediaItem.localConfiguration).uri;
+    this.initialManifestUri = mediaItem.localConfiguration.uri;
     this.manifest = manifest;
     this.manifestDataSourceFactory = manifestDataSourceFactory;
     this.manifestParser = manifestParser;
@@ -548,6 +424,7 @@ public final class DashMediaSource extends BaseMediaSource {
   protected void prepareSourceInternal(@Nullable TransferListener mediaTransferListener) {
     this.mediaTransferListener = mediaTransferListener;
     drmSessionManager.prepare();
+    drmSessionManager.setPlayer(/* playbackLooper= */ Looper.myLooper(), getPlayerId());
     if (sideloadedManifest) {
       processManifest(false);
     } else {
@@ -585,7 +462,8 @@ public final class DashMediaSource extends BaseMediaSource {
             manifestLoadErrorThrower,
             allocator,
             compositeSequenceableLoaderFactory,
-            playerEmsgCallback);
+            playerEmsgCallback,
+            getPlayerId());
     periodsById.put(mediaPeriod.id, mediaPeriod);
     return mediaPeriod;
   }
@@ -899,7 +777,7 @@ public final class DashMediaSource extends BaseMediaSource {
     int lastPeriodIndex = manifest.getPeriodCount() - 1;
     Period lastPeriod = manifest.getPeriod(lastPeriodIndex);
     long lastPeriodDurationUs = manifest.getPeriodDurationUs(lastPeriodIndex);
-    long nowUnixTimeUs = C.msToUs(Util.getNowUnixTimeMs(elapsedRealtimeOffsetMs));
+    long nowUnixTimeUs = Util.msToUs(Util.getNowUnixTimeMs(elapsedRealtimeOffsetMs));
     long windowStartTimeInManifestUs =
         getAvailableStartTimeInManifestUs(
             firstPeriod, manifest.getPeriodDurationUs(0), nowUnixTimeUs);
@@ -909,7 +787,7 @@ public final class DashMediaSource extends BaseMediaSource {
     if (windowChangingImplicitly && manifest.timeShiftBufferDepthMs != C.TIME_UNSET) {
       // Update the available start time to reflect the manifest's time shift buffer depth.
       long timeShiftBufferStartTimeInManifestUs =
-          windowEndTimeInManifestUs - C.msToUs(manifest.timeShiftBufferDepthMs);
+          windowEndTimeInManifestUs - Util.msToUs(manifest.timeShiftBufferDepthMs);
       windowStartTimeInManifestUs =
           max(windowStartTimeInManifestUs, timeShiftBufferStartTimeInManifestUs);
     }
@@ -919,11 +797,13 @@ public final class DashMediaSource extends BaseMediaSource {
     if (manifest.dynamic) {
       checkState(manifest.availabilityStartTimeMs != C.TIME_UNSET);
       long nowInWindowUs =
-          nowUnixTimeUs - C.msToUs(manifest.availabilityStartTimeMs) - windowStartTimeInManifestUs;
-      updateMediaItemLiveConfiguration(nowInWindowUs, windowDurationUs);
+          nowUnixTimeUs
+              - Util.msToUs(manifest.availabilityStartTimeMs)
+              - windowStartTimeInManifestUs;
+      updateLiveConfiguration(nowInWindowUs, windowDurationUs);
       windowStartUnixTimeMs =
-          manifest.availabilityStartTimeMs + C.usToMs(windowStartTimeInManifestUs);
-      windowDefaultPositionUs = nowInWindowUs - C.msToUs(liveConfiguration.targetOffsetMs);
+          manifest.availabilityStartTimeMs + Util.usToMs(windowStartTimeInManifestUs);
+      windowDefaultPositionUs = nowInWindowUs - Util.msToUs(liveConfiguration.targetOffsetMs);
       long minimumWindowDefaultPositionUs =
           min(MIN_LIVE_DEFAULT_START_POSITION_US, windowDurationUs / 2);
       if (windowDefaultPositionUs < minimumWindowDefaultPositionUs) {
@@ -933,7 +813,7 @@ public final class DashMediaSource extends BaseMediaSource {
         windowDefaultPositionUs = minimumWindowDefaultPositionUs;
       }
     }
-    long offsetInFirstPeriodUs = windowStartTimeInManifestUs - C.msToUs(firstPeriod.startMs);
+    long offsetInFirstPeriodUs = windowStartTimeInManifestUs - Util.msToUs(firstPeriod.startMs);
     DashTimeline timeline =
         new DashTimeline(
             manifest.availabilityStartTimeMs,
@@ -979,32 +859,44 @@ public final class DashMediaSource extends BaseMediaSource {
     }
   }
 
-  private void updateMediaItemLiveConfiguration(long nowInWindowUs, long windowDurationUs) {
-    long maxLiveOffsetMs;
+  private void updateLiveConfiguration(long nowInWindowUs, long windowDurationUs) {
+    // Default maximum offset: start of window.
+    long maxPossibleLiveOffsetMs = usToMs(nowInWindowUs);
+    long maxLiveOffsetMs = maxPossibleLiveOffsetMs;
+    // Override maximum offset with user or media defined values if they are smaller.
     if (mediaItem.liveConfiguration.maxOffsetMs != C.TIME_UNSET) {
-      maxLiveOffsetMs = mediaItem.liveConfiguration.maxOffsetMs;
+      maxLiveOffsetMs = min(maxLiveOffsetMs, mediaItem.liveConfiguration.maxOffsetMs);
     } else if (manifest.serviceDescription != null
         && manifest.serviceDescription.maxOffsetMs != C.TIME_UNSET) {
-      maxLiveOffsetMs = manifest.serviceDescription.maxOffsetMs;
-    } else {
-      maxLiveOffsetMs = C.usToMs(nowInWindowUs);
+      maxLiveOffsetMs = min(maxLiveOffsetMs, manifest.serviceDescription.maxOffsetMs);
     }
-    long minLiveOffsetMs;
+    // Default minimum offset: end of window.
+    long minLiveOffsetMs = usToMs(nowInWindowUs - windowDurationUs);
+    if (minLiveOffsetMs < 0 && maxLiveOffsetMs > 0) {
+      // The current time is in the window, so assume all clocks are synchronized and set the
+      // minimum to a live offset of zero.
+      minLiveOffsetMs = 0;
+    }
+    if (manifest.minBufferTimeMs != C.TIME_UNSET) {
+      // Ensure to leave one GOP as minimum and don't exceed the maximum possible offset.
+      minLiveOffsetMs = min(minLiveOffsetMs + manifest.minBufferTimeMs, maxPossibleLiveOffsetMs);
+    }
+    // Override minimum offset with user and media defined values if they are larger, but don't
+    // exceed the maximum possible offset.
     if (mediaItem.liveConfiguration.minOffsetMs != C.TIME_UNSET) {
-      minLiveOffsetMs = mediaItem.liveConfiguration.minOffsetMs;
+      minLiveOffsetMs =
+          constrainValue(
+              mediaItem.liveConfiguration.minOffsetMs, minLiveOffsetMs, maxPossibleLiveOffsetMs);
     } else if (manifest.serviceDescription != null
         && manifest.serviceDescription.minOffsetMs != C.TIME_UNSET) {
-      minLiveOffsetMs = manifest.serviceDescription.minOffsetMs;
-    } else {
-      minLiveOffsetMs = C.usToMs(nowInWindowUs - windowDurationUs);
-      if (minLiveOffsetMs < 0 && maxLiveOffsetMs > 0) {
-        // The current time is in the window, so assume all clocks are synchronized and set the
-        // minimum to a live offset of zero.
-        minLiveOffsetMs = 0;
-      }
-      if (manifest.minBufferTimeMs != C.TIME_UNSET) {
-        minLiveOffsetMs = min(minLiveOffsetMs + manifest.minBufferTimeMs, maxLiveOffsetMs);
-      }
+      minLiveOffsetMs =
+          constrainValue(
+              manifest.serviceDescription.minOffsetMs, minLiveOffsetMs, maxPossibleLiveOffsetMs);
+    }
+    if (minLiveOffsetMs > maxLiveOffsetMs) {
+      // The values can be set by different sources and may disagree. Prefer the maximum offset
+      // under the assumption that it is safer for playback.
+      maxLiveOffsetMs = minLiveOffsetMs;
     }
     long targetOffsetMs;
     if (liveConfiguration.targetOffsetMs != C.TIME_UNSET) {
@@ -1025,9 +917,9 @@ public final class DashMediaSource extends BaseMediaSource {
       long safeDistanceFromWindowStartUs =
           min(MIN_LIVE_DEFAULT_START_POSITION_US, windowDurationUs / 2);
       long maxTargetOffsetForSafeDistanceToWindowStartMs =
-          C.usToMs(nowInWindowUs - safeDistanceFromWindowStartUs);
+          usToMs(nowInWindowUs - safeDistanceFromWindowStartUs);
       targetOffsetMs =
-          Util.constrainValue(
+          constrainValue(
               maxTargetOffsetForSafeDistanceToWindowStartMs, minLiveOffsetMs, maxLiveOffsetMs);
     }
     float minPlaybackSpeed = C.RATE_UNSET;
@@ -1042,9 +934,24 @@ public final class DashMediaSource extends BaseMediaSource {
     } else if (manifest.serviceDescription != null) {
       maxPlaybackSpeed = manifest.serviceDescription.maxPlaybackSpeed;
     }
+    if (minPlaybackSpeed == C.RATE_UNSET
+        && maxPlaybackSpeed == C.RATE_UNSET
+        && (manifest.serviceDescription == null
+            || manifest.serviceDescription.targetOffsetMs == C.TIME_UNSET)) {
+      // Force unit speed (instead of automatic adjustment with fallback speeds) if there are no
+      // specific speed limits defined by the media item or the manifest, and the manifest contains
+      // no low-latency target offset either.
+      minPlaybackSpeed = 1f;
+      maxPlaybackSpeed = 1f;
+    }
     liveConfiguration =
-        new MediaItem.LiveConfiguration(
-            targetOffsetMs, minLiveOffsetMs, maxLiveOffsetMs, minPlaybackSpeed, maxPlaybackSpeed);
+        new MediaItem.LiveConfiguration.Builder()
+            .setTargetOffsetMs(targetOffsetMs)
+            .setMinOffsetMs(minLiveOffsetMs)
+            .setMaxOffsetMs(maxLiveOffsetMs)
+            .setMinPlaybackSpeed(minPlaybackSpeed)
+            .setMaxPlaybackSpeed(maxPlaybackSpeed)
+            .build();
   }
 
   private void scheduleManifestRefresh(long delayUntilNextLoadMs) {
@@ -1089,11 +996,11 @@ public final class DashMediaSource extends BaseMediaSource {
       DashManifest manifest, long nowUnixTimeMs) {
     int periodIndex = manifest.getPeriodCount() - 1;
     Period period = manifest.getPeriod(periodIndex);
-    long periodStartUs = C.msToUs(period.startMs);
+    long periodStartUs = Util.msToUs(period.startMs);
     long periodDurationUs = manifest.getPeriodDurationUs(periodIndex);
-    long nowUnixTimeUs = C.msToUs(nowUnixTimeMs);
-    long availabilityStartTimeUs = C.msToUs(manifest.availabilityStartTimeMs);
-    long intervalUs = C.msToUs(DEFAULT_NOTIFY_MANIFEST_INTERVAL_MS);
+    long nowUnixTimeUs = Util.msToUs(nowUnixTimeMs);
+    long availabilityStartTimeUs = Util.msToUs(manifest.availabilityStartTimeMs);
+    long intervalUs = Util.msToUs(DEFAULT_NOTIFY_MANIFEST_INTERVAL_MS);
     for (int i = 0; i < period.adaptationSets.size(); i++) {
       List<Representation> representations = period.adaptationSets.get(i).representations;
       if (representations.isEmpty()) {
@@ -1119,7 +1026,7 @@ public final class DashMediaSource extends BaseMediaSource {
 
   private static long getAvailableStartTimeInManifestUs(
       Period period, long periodDurationUs, long nowUnixTimeUs) {
-    long periodStartTimeInManifestUs = C.msToUs(period.startMs);
+    long periodStartTimeInManifestUs = Util.msToUs(period.startMs);
     long availableStartTimeInManifestUs = periodStartTimeInManifestUs;
     boolean haveAudioVideoAdaptationSets = hasVideoOrAudioAdaptationSets(period);
     for (int i = 0; i < period.adaptationSets.size(); i++) {
@@ -1151,7 +1058,7 @@ public final class DashMediaSource extends BaseMediaSource {
 
   private static long getAvailableEndTimeInManifestUs(
       Period period, long periodDurationUs, long nowUnixTimeUs) {
-    long periodStartTimeInManifestUs = C.msToUs(period.startMs);
+    long periodStartTimeInManifestUs = Util.msToUs(period.startMs);
     long availableEndTimeInManifestUs = Long.MAX_VALUE;
     boolean haveAudioVideoAdaptationSets = hasVideoOrAudioAdaptationSets(period);
     for (int i = 0; i < period.adaptationSets.size(); i++) {
@@ -1258,7 +1165,7 @@ public final class DashMediaSource extends BaseMediaSource {
           uid,
           0,
           manifest.getPeriodDurationUs(periodIndex),
-          C.msToUs(manifest.getPeriod(periodIndex).startMs - manifest.getPeriod(0).startMs)
+          Util.msToUs(manifest.getPeriod(periodIndex).startMs - manifest.getPeriod(0).startMs)
               - offsetInFirstPeriodUs);
     }
 

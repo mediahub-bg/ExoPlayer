@@ -19,7 +19,9 @@ import static com.google.android.exoplayer2.decoder.DecoderReuseEvaluation.DISCA
 import static com.google.android.exoplayer2.decoder.DecoderReuseEvaluation.DISCARD_REASON_REUSE_NOT_IMPLEMENTED;
 import static com.google.android.exoplayer2.decoder.DecoderReuseEvaluation.REUSE_RESULT_NO;
 import static com.google.android.exoplayer2.source.SampleStream.FLAG_REQUIRE_FORMAT;
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static java.lang.Math.max;
+import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.os.Handler;
 import android.os.SystemClock;
@@ -38,15 +40,15 @@ import com.google.android.exoplayer2.PlayerMessage.Target;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener.EventDispatcher;
 import com.google.android.exoplayer2.audio.AudioSink.SinkFormatSupport;
+import com.google.android.exoplayer2.decoder.CryptoConfig;
 import com.google.android.exoplayer2.decoder.Decoder;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.decoder.DecoderException;
 import com.google.android.exoplayer2.decoder.DecoderInputBuffer;
 import com.google.android.exoplayer2.decoder.DecoderReuseEvaluation;
-import com.google.android.exoplayer2.decoder.SimpleOutputBuffer;
+import com.google.android.exoplayer2.decoder.SimpleDecoderOutputBuffer;
 import com.google.android.exoplayer2.drm.DrmSession;
 import com.google.android.exoplayer2.drm.DrmSession.DrmSessionException;
-import com.google.android.exoplayer2.drm.ExoMediaCrypto;
 import com.google.android.exoplayer2.source.SampleStream.ReadDataResult;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
@@ -68,8 +70,8 @@ import java.lang.annotation.RetentionPolicy;
  *   <li>Message with type {@link #MSG_SET_VOLUME} to set the volume. The message payload should be
  *       a {@link Float} with 0 being silence and 1 being unity gain.
  *   <li>Message with type {@link #MSG_SET_AUDIO_ATTRIBUTES} to set the audio attributes. The
- *       message payload should be an {@link com.google.android.exoplayer2.audio.AudioAttributes}
- *       instance that will configure the underlying audio track.
+ *       message payload should be an {@link AudioAttributes} instance that will configure the
+ *       underlying audio track.
  *   <li>Message with type {@link #MSG_SET_AUX_EFFECT_INFO} to set the auxiliary effect. The message
  *       payload should be an {@link AuxEffectInfo} instance that will configure the underlying
  *       audio track.
@@ -82,13 +84,17 @@ import java.lang.annotation.RetentionPolicy;
  */
 public abstract class DecoderAudioRenderer<
         T extends
-            Decoder<DecoderInputBuffer, ? extends SimpleOutputBuffer, ? extends DecoderException>>
+            Decoder<
+                    DecoderInputBuffer,
+                    ? extends SimpleDecoderOutputBuffer,
+                    ? extends DecoderException>>
     extends BaseRenderer implements MediaClock {
 
   private static final String TAG = "DecoderAudioRenderer";
 
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @java.lang.annotation.Target(TYPE_USE)
   @IntDef({
     REINITIALIZATION_STATE_NONE,
     REINITIALIZATION_STATE_SIGNAL_END_OF_STREAM,
@@ -124,11 +130,11 @@ public abstract class DecoderAudioRenderer<
   @Nullable private T decoder;
 
   @Nullable private DecoderInputBuffer inputBuffer;
-  @Nullable private SimpleOutputBuffer outputBuffer;
+  @Nullable private SimpleDecoderOutputBuffer outputBuffer;
   @Nullable private DrmSession decoderDrmSession;
   @Nullable private DrmSession sourceDrmSession;
 
-  @ReinitializationState private int decoderReinitializationState;
+  private @ReinitializationState int decoderReinitializationState;
   private boolean decoderReceivedBuffers;
   private boolean audioTrackNeedsConfigure;
 
@@ -159,16 +165,24 @@ public abstract class DecoderAudioRenderer<
    * @param eventHandler A handler to use when delivering events to {@code eventListener}. May be
    *     null if delivery of events is not required.
    * @param eventListener A listener of events. May be null if delivery of events is not required.
-   * @param audioCapabilities The audio capabilities for playback on this device. May be null if the
-   *     default capabilities (no encoded audio passthrough support) should be assumed.
+   * @param audioCapabilities The audio capabilities for playback on this device. Use {@link
+   *     AudioCapabilities#DEFAULT_AUDIO_CAPABILITIES} if default capabilities (no encoded audio
+   *     passthrough support) should be assumed.
    * @param audioProcessors Optional {@link AudioProcessor}s that will process audio before output.
    */
   public DecoderAudioRenderer(
       @Nullable Handler eventHandler,
       @Nullable AudioRendererEventListener eventListener,
-      @Nullable AudioCapabilities audioCapabilities,
+      AudioCapabilities audioCapabilities,
       AudioProcessor... audioProcessors) {
-    this(eventHandler, eventListener, new DefaultAudioSink(audioCapabilities, audioProcessors));
+    this(
+        eventHandler,
+        eventListener,
+        new DefaultAudioSink.Builder()
+            .setAudioCapabilities( // For backward compatibility, null == default.
+                firstNonNull(audioCapabilities, AudioCapabilities.DEFAULT_AUDIO_CAPABILITIES))
+            .setAudioProcessors(audioProcessors)
+            .build());
   }
 
   /**
@@ -210,8 +224,7 @@ public abstract class DecoderAudioRenderer<
   }
 
   @Override
-  @Capabilities
-  public final int supportsFormat(Format format) {
+  public final @Capabilities int supportsFormat(Format format) {
     if (!MimeTypes.isAudio(format.sampleMimeType)) {
       return RendererCapabilities.create(C.FORMAT_UNSUPPORTED_TYPE);
     }
@@ -230,8 +243,7 @@ public abstract class DecoderAudioRenderer<
    * @param format The format, which has an audio {@link Format#sampleMimeType}.
    * @return The {@link C.FormatSupport} for this {@link Format}.
    */
-  @C.FormatSupport
-  protected abstract int supportsFormatInternal(Format format);
+  protected abstract @C.FormatSupport int supportsFormatInternal(Format format);
 
   /**
    * Returns whether the renderer's {@link AudioSink} supports a given {@link Format}.
@@ -248,8 +260,7 @@ public abstract class DecoderAudioRenderer<
    *
    * @see AudioSink#getFormatSupport(Format) (Format)
    */
-  @SinkFormatSupport
-  protected final int getSinkFormatSupport(Format format) {
+  protected final @SinkFormatSupport int getSinkFormatSupport(Format format) {
     return audioSink.getFormatSupport(format);
   }
 
@@ -330,12 +341,12 @@ public abstract class DecoderAudioRenderer<
    * Creates a decoder for the given format.
    *
    * @param format The format for which a decoder is required.
-   * @param mediaCrypto The {@link ExoMediaCrypto} object required for decoding encrypted content.
-   *     Maybe null and can be ignored if decoder does not handle encrypted content.
+   * @param cryptoConfig The {@link CryptoConfig} object required for decoding encrypted content.
+   *     May be null and can be ignored if decoder does not handle encrypted content.
    * @return The decoder.
    * @throws DecoderException If an error occurred creating a suitable decoder.
    */
-  protected abstract T createDecoder(Format format, @Nullable ExoMediaCrypto mediaCrypto)
+  protected abstract T createDecoder(Format format, @Nullable CryptoConfig cryptoConfig)
       throws DecoderException;
 
   /**
@@ -456,10 +467,11 @@ public abstract class DecoderAudioRenderer<
           return false;
         }
         inputBuffer.flip();
+        inputBuffer.format = inputFormat;
         onQueueInputBuffer(inputBuffer);
         decoder.queueInputBuffer(inputBuffer);
         decoderReceivedBuffers = true;
-        decoderCounters.inputBufferCount++;
+        decoderCounters.queuedInputBufferCount++;
         inputBuffer = null;
         return true;
       default:
@@ -526,6 +538,7 @@ public abstract class DecoderAudioRenderer<
     } else {
       audioSink.disableTunneling();
     }
+    audioSink.setPlayerId(getPlayerId());
   }
 
   @Override
@@ -571,7 +584,8 @@ public abstract class DecoderAudioRenderer<
   }
 
   @Override
-  public void handleMessage(int messageType, @Nullable Object message) throws ExoPlaybackException {
+  public void handleMessage(@MessageType int messageType, @Nullable Object message)
+      throws ExoPlaybackException {
     switch (messageType) {
       case MSG_SET_VOLUME:
         audioSink.setVolume((Float) message);
@@ -590,6 +604,12 @@ public abstract class DecoderAudioRenderer<
       case MSG_SET_AUDIO_SESSION_ID:
         audioSink.setAudioSessionId((Integer) message);
         break;
+      case MSG_SET_CAMERA_MOTION_LISTENER:
+      case MSG_SET_CHANGE_FRAME_RATE_STRATEGY:
+      case MSG_SET_SCALING_MODE:
+      case MSG_SET_VIDEO_FRAME_METADATA_LISTENER:
+      case MSG_SET_VIDEO_OUTPUT:
+      case MSG_SET_WAKEUP_LISTENER:
       default:
         super.handleMessage(messageType, message);
         break;
@@ -603,10 +623,10 @@ public abstract class DecoderAudioRenderer<
 
     setDecoderDrmSession(sourceDrmSession);
 
-    ExoMediaCrypto mediaCrypto = null;
+    CryptoConfig cryptoConfig = null;
     if (decoderDrmSession != null) {
-      mediaCrypto = decoderDrmSession.getMediaCrypto();
-      if (mediaCrypto == null) {
+      cryptoConfig = decoderDrmSession.getCryptoConfig();
+      if (cryptoConfig == null) {
         DrmSessionException drmError = decoderDrmSession.getError();
         if (drmError != null) {
           // Continue for now. We may be able to avoid failure if a new input format causes the
@@ -621,7 +641,7 @@ public abstract class DecoderAudioRenderer<
     try {
       long codecInitializingTimestamp = SystemClock.elapsedRealtime();
       TraceUtil.beginSection("createAudioDecoder");
-      decoder = createDecoder(inputFormat, mediaCrypto);
+      decoder = createDecoder(inputFormat, cryptoConfig);
       TraceUtil.endSection();
       long codecInitializedTimestamp = SystemClock.elapsedRealtime();
       eventDispatcher.decoderInitialized(

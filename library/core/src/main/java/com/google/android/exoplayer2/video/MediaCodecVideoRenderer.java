@@ -65,8 +65,8 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.TraceUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoRendererEventListener.EventDispatcher;
+import com.google.common.collect.ImmutableList;
 import java.nio.ByteBuffer;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -83,6 +83,8 @@ import java.util.List;
  *       payload should be one of the integer scaling modes in {@link C.VideoScalingMode}. Note that
  *       the scaling mode only applies if the {@link Surface} targeted by this renderer is owned by
  *       a {@link android.view.SurfaceView}.
+ *   <li>Message with type {@link #MSG_SET_CHANGE_FRAME_RATE_STRATEGY} to set the strategy used to
+ *       call {@link Surface#setFrameRate}.
  *   <li>Message with type {@link #MSG_SET_VIDEO_FRAME_METADATA_LISTENER} to set a listener for
  *       metadata associated with frames being rendered. The message payload should be the {@link
  *       VideoFrameMetadataListener}, or null.
@@ -126,7 +128,7 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
   @Nullable private Surface surface;
   @Nullable private DummySurface dummySurface;
   private boolean haveReportedFirstFrameRenderedForCurrentSurface;
-  @C.VideoScalingMode private int scalingMode;
+  private @C.VideoScalingMode int scalingMode;
   private boolean renderedFirstFrameAfterReset;
   private boolean mayRenderFirstFrameAfterEnableIfNotStarted;
   private boolean renderedFirstFrameAfterEnable;
@@ -203,7 +205,8 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
         /* enableDecoderFallback= */ false,
         eventHandler,
         eventListener,
-        maxDroppedFramesToNotify);
+        maxDroppedFramesToNotify,
+        /* assumedMinimumCodecOperatingRate= */ 30);
   }
 
   /**
@@ -236,12 +239,11 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
         enableDecoderFallback,
         eventHandler,
         eventListener,
-        maxDroppedFramesToNotify);
+        maxDroppedFramesToNotify,
+        /* assumedMinimumCodecOperatingRate= */ 30);
   }
 
   /**
-   * Creates a new instance.
-   *
    * @param context A context.
    * @param codecAdapterFactory The {@link MediaCodecAdapter.Factory} used to create {@link
    *     MediaCodecAdapter} instances.
@@ -266,12 +268,56 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       @Nullable Handler eventHandler,
       @Nullable VideoRendererEventListener eventListener,
       int maxDroppedFramesToNotify) {
+
+    this(
+        context,
+        codecAdapterFactory,
+        mediaCodecSelector,
+        allowedJoiningTimeMs,
+        enableDecoderFallback,
+        eventHandler,
+        eventListener,
+        maxDroppedFramesToNotify,
+        /* assumedMinimumCodecOperatingRate= */ 30);
+  }
+
+  /**
+   * Creates a new instance.
+   *
+   * @param context A context.
+   * @param codecAdapterFactory The {@link MediaCodecAdapter.Factory} used to create {@link
+   *     MediaCodecAdapter} instances.
+   * @param mediaCodecSelector A decoder selector.
+   * @param allowedJoiningTimeMs The maximum duration in milliseconds for which this video renderer
+   *     can attempt to seamlessly join an ongoing playback.
+   * @param enableDecoderFallback Whether to enable fallback to lower-priority decoders if decoder
+   *     initialization fails. This may result in using a decoder that is slower/less efficient than
+   *     the primary decoder.
+   * @param eventHandler A handler to use when delivering events to {@code eventListener}. May be
+   *     null if delivery of events is not required.
+   * @param eventListener A listener of events. May be null if delivery of events is not required.
+   * @param maxDroppedFramesToNotify The maximum number of frames that can be dropped between
+   *     invocations of {@link VideoRendererEventListener#onDroppedFrames(int, long)}.
+   * @param assumedMinimumCodecOperatingRate A codec operating rate that all codecs instantiated by
+   *     this renderer are assumed to meet implicitly (i.e. without the operating rate being set
+   *     explicitly using {@link MediaFormat#KEY_OPERATING_RATE}).
+   */
+  public MediaCodecVideoRenderer(
+      Context context,
+      MediaCodecAdapter.Factory codecAdapterFactory,
+      MediaCodecSelector mediaCodecSelector,
+      long allowedJoiningTimeMs,
+      boolean enableDecoderFallback,
+      @Nullable Handler eventHandler,
+      @Nullable VideoRendererEventListener eventListener,
+      int maxDroppedFramesToNotify,
+      float assumedMinimumCodecOperatingRate) {
     super(
         C.TRACK_TYPE_VIDEO,
         codecAdapterFactory,
         mediaCodecSelector,
         enableDecoderFallback,
-        /* assumedMinimumCodecOperatingRate= */ 30);
+        assumedMinimumCodecOperatingRate);
     this.allowedJoiningTimeMs = allowedJoiningTimeMs;
     this.maxDroppedFramesToNotify = maxDroppedFramesToNotify;
     this.context = context.getApplicationContext();
@@ -293,8 +339,7 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
   }
 
   @Override
-  @Capabilities
-  protected int supportsFormat(MediaCodecSelector mediaCodecSelector, Format format)
+  protected @Capabilities int supportsFormat(MediaCodecSelector mediaCodecSelector, Format format)
       throws DecoderQueryException {
     String mimeType = format.sampleMimeType;
     if (!MimeTypes.isVideo(mimeType)) {
@@ -324,14 +369,38 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     if (!supportsFormatDrm(format)) {
       return RendererCapabilities.create(C.FORMAT_UNSUPPORTED_DRM);
     }
-    // Check capabilities for the first decoder in the list, which takes priority.
+    // Check whether the first decoder supports the format. This is the preferred decoder for the
+    // format's MIME type, according to the MediaCodecSelector.
     MediaCodecInfo decoderInfo = decoderInfos.get(0);
     boolean isFormatSupported = decoderInfo.isFormatSupported(format);
+    boolean isPreferredDecoder = true;
+    if (!isFormatSupported) {
+      // Check whether any of the other decoders support the format.
+      for (int i = 1; i < decoderInfos.size(); i++) {
+        MediaCodecInfo otherDecoderInfo = decoderInfos.get(i);
+        if (otherDecoderInfo.isFormatSupported(format)) {
+          decoderInfo = otherDecoderInfo;
+          isFormatSupported = true;
+          isPreferredDecoder = false;
+          break;
+        }
+      }
+    }
+    @C.FormatSupport
+    int formatSupport = isFormatSupported ? C.FORMAT_HANDLED : C.FORMAT_EXCEEDS_CAPABILITIES;
     @AdaptiveSupport
     int adaptiveSupport =
         decoderInfo.isSeamlessAdaptationSupported(format)
             ? ADAPTIVE_SEAMLESS
             : ADAPTIVE_NOT_SEAMLESS;
+    @HardwareAccelerationSupport
+    int hardwareAccelerationSupport =
+        decoderInfo.hardwareAccelerated
+            ? HARDWARE_ACCELERATION_SUPPORTED
+            : HARDWARE_ACCELERATION_NOT_SUPPORTED;
+    @DecoderSupport
+    int decoderSupport = isPreferredDecoder ? DECODER_SUPPORT_PRIMARY : DECODER_SUPPORT_FALLBACK;
+
     @TunnelingSupport int tunnelingSupport = TUNNELING_NOT_SUPPORTED;
     if (isFormatSupported) {
       List<MediaCodecInfo> tunnelingDecoderInfos =
@@ -341,25 +410,48 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
               requiresSecureDecryption,
               /* requiresTunnelingDecoder= */ true);
       if (!tunnelingDecoderInfos.isEmpty()) {
-        MediaCodecInfo tunnelingDecoderInfo = tunnelingDecoderInfos.get(0);
+        MediaCodecInfo tunnelingDecoderInfo =
+            MediaCodecUtil.getDecoderInfosSortedByFormatSupport(tunnelingDecoderInfos, format)
+                .get(0);
         if (tunnelingDecoderInfo.isFormatSupported(format)
             && tunnelingDecoderInfo.isSeamlessAdaptationSupported(format)) {
           tunnelingSupport = TUNNELING_SUPPORTED;
         }
       }
     }
-    @C.FormatSupport
-    int formatSupport = isFormatSupported ? C.FORMAT_HANDLED : C.FORMAT_EXCEEDS_CAPABILITIES;
-    return RendererCapabilities.create(formatSupport, adaptiveSupport, tunnelingSupport);
+
+    return RendererCapabilities.create(
+        formatSupport,
+        adaptiveSupport,
+        tunnelingSupport,
+        hardwareAccelerationSupport,
+        decoderSupport);
   }
 
   @Override
   protected List<MediaCodecInfo> getDecoderInfos(
       MediaCodecSelector mediaCodecSelector, Format format, boolean requiresSecureDecoder)
       throws DecoderQueryException {
-    return getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder, tunneling);
+    return MediaCodecUtil.getDecoderInfosSortedByFormatSupport(
+        getDecoderInfos(mediaCodecSelector, format, requiresSecureDecoder, tunneling), format);
   }
 
+  /**
+   * Returns a list of decoders that can decode media in the specified format, in the priority order
+   * specified by the {@link MediaCodecSelector}. Note that since the {@link MediaCodecSelector}
+   * only has access to {@link Format#sampleMimeType}, the list is not ordered to account for
+   * whether each decoder supports the details of the format (e.g., taking into account the format's
+   * profile, level, resolution and so on). {@link
+   * MediaCodecUtil#getDecoderInfosSortedByFormatSupport} can be used to further sort the list into
+   * an order where decoders that fully support the format come first.
+   *
+   * @param mediaCodecSelector The decoder selector.
+   * @param format The {@link Format} for which a decoder is required.
+   * @param requiresSecureDecoder Whether a secure decoder is required.
+   * @param requiresTunnelingDecoder Whether a tunneling decoder is required.
+   * @return A list of {@link MediaCodecInfo}s corresponding to decoders. May be empty.
+   * @throws DecoderQueryException Thrown if there was an error querying decoders.
+   */
   private static List<MediaCodecInfo> getDecoderInfos(
       MediaCodecSelector mediaCodecSelector,
       Format format,
@@ -368,34 +460,22 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       throws DecoderQueryException {
     @Nullable String mimeType = format.sampleMimeType;
     if (mimeType == null) {
-      return Collections.emptyList();
+      return ImmutableList.of();
     }
     List<MediaCodecInfo> decoderInfos =
         mediaCodecSelector.getDecoderInfos(
             mimeType, requiresSecureDecoder, requiresTunnelingDecoder);
-    decoderInfos = MediaCodecUtil.getDecoderInfosSortedByFormatSupport(decoderInfos, format);
-    if (MimeTypes.VIDEO_DOLBY_VISION.equals(mimeType)) {
-      // Fall back to H.264/AVC or H.265/HEVC for the relevant DV profiles. This can't be done for
-      // profile CodecProfileLevel.DolbyVisionProfileDvheStn and profile
-      // CodecProfileLevel.DolbyVisionProfileDvheDtb because the first one is not backward
-      // compatible and the second one is deprecated and is not always backward compatible.
-      @Nullable
-      Pair<Integer, Integer> codecProfileAndLevel = MediaCodecUtil.getCodecProfileAndLevel(format);
-      if (codecProfileAndLevel != null) {
-        int profile = codecProfileAndLevel.first;
-        if (profile == CodecProfileLevel.DolbyVisionProfileDvheDtr
-            || profile == CodecProfileLevel.DolbyVisionProfileDvheSt) {
-          decoderInfos.addAll(
-              mediaCodecSelector.getDecoderInfos(
-                  MimeTypes.VIDEO_H265, requiresSecureDecoder, requiresTunnelingDecoder));
-        } else if (profile == CodecProfileLevel.DolbyVisionProfileDvavSe) {
-          decoderInfos.addAll(
-              mediaCodecSelector.getDecoderInfos(
-                  MimeTypes.VIDEO_H264, requiresSecureDecoder, requiresTunnelingDecoder));
-        }
-      }
+    @Nullable String alternativeMimeType = MediaCodecUtil.getAlternativeCodecMimeType(format);
+    if (alternativeMimeType == null) {
+      return ImmutableList.copyOf(decoderInfos);
     }
-    return Collections.unmodifiableList(decoderInfos);
+    List<MediaCodecInfo> alternativeDecoderInfos =
+        mediaCodecSelector.getDecoderInfos(
+            alternativeMimeType, requiresSecureDecoder, requiresTunnelingDecoder);
+    return ImmutableList.<MediaCodecInfo>builder()
+        .addAll(decoderInfos)
+        .addAll(alternativeDecoderInfos)
+        .build();
   }
 
   @Override
@@ -409,7 +489,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       releaseCodec();
     }
     eventDispatcher.enabled(decoderCounters);
-    frameReleaseHelper.onEnabled();
     mayRenderFirstFrameAfterEnableIfNotStarted = mayRenderStartOfStream;
     renderedFirstFrameAfterEnable = false;
   }
@@ -477,7 +556,6 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     clearReportedVideoSize();
     clearRenderedFirstFrame();
     haveReportedFirstFrameRenderedForCurrentSurface = false;
-    frameReleaseHelper.onDisabled();
     tunnelingOnFrameRenderedListener = null;
     try {
       super.onDisabled();
@@ -493,17 +571,14 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       super.onReset();
     } finally {
       if (dummySurface != null) {
-        if (surface == dummySurface) {
-          surface = null;
-        }
-        dummySurface.release();
-        dummySurface = null;
+        releaseDummySurface();
       }
     }
   }
 
   @Override
-  public void handleMessage(int messageType, @Nullable Object message) throws ExoPlaybackException {
+  public void handleMessage(@MessageType int messageType, @Nullable Object message)
+      throws ExoPlaybackException {
     switch (messageType) {
       case MSG_SET_VIDEO_OUTPUT:
         setOutput(message);
@@ -514,6 +589,9 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
         if (codec != null) {
           codec.setVideoScalingMode(scalingMode);
         }
+        break;
+      case MSG_SET_CHANGE_FRAME_RATE_STRATEGY:
+        frameReleaseHelper.setChangeFrameRateStrategy((int) message);
         break;
       case MSG_SET_VIDEO_FRAME_METADATA_LISTENER:
         frameMetadataListener = (VideoFrameMetadataListener) message;
@@ -527,6 +605,12 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
           }
         }
         break;
+      case MSG_SET_AUDIO_ATTRIBUTES:
+      case MSG_SET_AUX_EFFECT_INFO:
+      case MSG_SET_CAMERA_MOTION_LISTENER:
+      case MSG_SET_SKIP_SILENCE_ENABLED:
+      case MSG_SET_VOLUME:
+      case MSG_SET_WAKEUP_LISTENER:
       default:
         super.handleMessage(messageType, message);
     }
@@ -606,8 +690,7 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       float codecOperatingRate) {
     if (dummySurface != null && dummySurface.secure != codecInfo.secure) {
       // We can't re-use the current DummySurface instance with the new decoder.
-      dummySurface.release();
-      dummySurface = null;
+      releaseDummySurface();
     }
     String codecMimeType = codecInfo.codecMimeType;
     codecMaxValues = getCodecMaxValues(codecInfo, format, getStreamFormats());
@@ -628,8 +711,8 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       }
       surface = dummySurface;
     }
-    return new MediaCodecAdapter.Configuration(
-        codecInfo, mediaFormat, format, surface, crypto, /* flags= */ 0);
+    return MediaCodecAdapter.Configuration.createForVideoDecoding(
+        codecInfo, mediaFormat, format, surface, crypto);
   }
 
   @Override
@@ -684,7 +767,10 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
 
   @Override
   protected void onCodecInitialized(
-      String name, long initializedTimestampMs, long initializationDurationMs) {
+      String name,
+      MediaCodecAdapter.Configuration configuration,
+      long initializedTimestampMs,
+      long initializationDurationMs) {
     eventDispatcher.decoderInitialized(name, initializedTimestampMs, initializationDurationMs);
     codecNeedsSetOutputSurfaceWorkaround = codecNeedsSetOutputSurfaceWorkaround(name);
     codecHandlesHdr10PlusOutOfBandMetadata =
@@ -1057,7 +1143,8 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     TraceUtil.beginSection("dropVideoBuffer");
     codec.releaseOutputBuffer(index, false);
     TraceUtil.endSection();
-    updateDroppedBufferCounters(1);
+    updateDroppedBufferCounters(
+        /* droppedInputBufferCount= */ 0, /* droppedDecoderBufferCount= */ 1);
   }
 
   /**
@@ -1077,29 +1164,35 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
     if (droppedSourceBufferCount == 0) {
       return false;
     }
-    decoderCounters.droppedToKeyframeCount++;
     // We dropped some buffers to catch up, so update the decoder counters and flush the codec,
     // which releases all pending buffers buffers including the current output buffer.
-    int totalDroppedBufferCount = buffersInCodecCount + droppedSourceBufferCount;
     if (treatDroppedBuffersAsSkipped) {
-      decoderCounters.skippedOutputBufferCount += totalDroppedBufferCount;
+      decoderCounters.skippedInputBufferCount += droppedSourceBufferCount;
+      decoderCounters.skippedOutputBufferCount += buffersInCodecCount;
     } else {
-      updateDroppedBufferCounters(totalDroppedBufferCount);
+      decoderCounters.droppedToKeyframeCount++;
+      updateDroppedBufferCounters(
+          droppedSourceBufferCount, /* droppedDecoderBufferCount= */ buffersInCodecCount);
     }
     flushOrReinitializeCodec();
     return true;
   }
 
   /**
-   * Updates local counters and {@link DecoderCounters} to reflect that {@code droppedBufferCount}
-   * additional buffers were dropped.
+   * Updates local counters and {@link #decoderCounters} to reflect that buffers were dropped.
    *
-   * @param droppedBufferCount The number of additional dropped buffers.
+   * @param droppedInputBufferCount The number of buffers dropped from the source before being
+   *     passed to the decoder.
+   * @param droppedDecoderBufferCount The number of buffers dropped after being passed to the
+   *     decoder.
    */
-  protected void updateDroppedBufferCounters(int droppedBufferCount) {
-    decoderCounters.droppedBufferCount += droppedBufferCount;
-    droppedFrames += droppedBufferCount;
-    consecutiveDroppedFrameCount += droppedBufferCount;
+  protected void updateDroppedBufferCounters(
+      int droppedInputBufferCount, int droppedDecoderBufferCount) {
+    decoderCounters.droppedInputBufferCount += droppedInputBufferCount;
+    int totalDroppedBufferCount = droppedInputBufferCount + droppedDecoderBufferCount;
+    decoderCounters.droppedBufferCount += totalDroppedBufferCount;
+    droppedFrames += totalDroppedBufferCount;
+    consecutiveDroppedFrameCount += totalDroppedBufferCount;
     decoderCounters.maxConsecutiveDroppedBufferCount =
         max(consecutiveDroppedFrameCount, decoderCounters.maxConsecutiveDroppedBufferCount);
     if (maxDroppedFramesToNotify > 0 && droppedFrames >= maxDroppedFramesToNotify) {
@@ -1164,6 +1257,15 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
         && !tunneling
         && !codecNeedsSetOutputSurfaceWorkaround(codecInfo.name)
         && (!codecInfo.secure || DummySurface.isSecureSupported(context));
+  }
+
+  @RequiresApi(17)
+  private void releaseDummySurface() {
+    if (surface == dummySurface) {
+      surface = null;
+    }
+    dummySurface.release();
+    dummySurface = null;
   }
 
   private void setJoiningDeadlineMs() {
@@ -1634,7 +1736,9 @@ public class MediaCodecVideoRenderer extends MediaCodecRenderer {
       // https://github.com/google/ExoPlayer/issues/6899.
       // https://github.com/google/ExoPlayer/issues/8014.
       // https://github.com/google/ExoPlayer/issues/8329.
+      // https://github.com/google/ExoPlayer/issues/9710.
       switch (Util.DEVICE) {
+        case "aquaman":
         case "dangal":
         case "dangalUHD":
         case "dangalFHD":

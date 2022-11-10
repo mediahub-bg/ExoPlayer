@@ -15,6 +15,8 @@
  */
 package com.google.android.exoplayer2.extractor.ts;
 
+import static java.lang.annotation.ElementType.TYPE_USE;
+
 import android.util.SparseArray;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
@@ -27,6 +29,7 @@ import com.google.common.collect.ImmutableList;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,6 +45,7 @@ public final class DefaultTsPayloadReaderFactory implements TsPayloadReader.Fact
    */
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
   @IntDef(
       flag = true,
       value = {
@@ -98,7 +102,7 @@ public final class DefaultTsPayloadReaderFactory implements TsPayloadReader.Fact
 
   private static final int DESCRIPTOR_TAG_CAPTION_SERVICE = 0x86;
 
-  @Flags private final int flags;
+  private final @Flags int flags;
   private final List<Format> closedCaptionFormats;
 
   public DefaultTsPayloadReaderFactory() {
@@ -161,6 +165,7 @@ public final class DefaultTsPayloadReaderFactory implements TsPayloadReader.Fact
       case TsExtractor.TS_STREAM_TYPE_DTS:
         return new PesReader(new DtsReader(esInfo.language));
       case TsExtractor.TS_STREAM_TYPE_H262:
+      case TsExtractor.TS_STREAM_TYPE_DC2_H262:
         return new PesReader(new H262Reader(buildUserDataReader(esInfo)));
       case TsExtractor.TS_STREAM_TYPE_H263:
         return new PesReader(new H263Reader(buildUserDataReader(esInfo)));

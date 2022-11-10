@@ -21,6 +21,7 @@ import static com.google.android.exoplayer2.util.Assertions.checkState;
 import static com.google.android.exoplayer2.util.Util.castNonNull;
 import static com.google.android.exoplayer2.util.Util.nullSafeArrayCopy;
 import static java.lang.Math.max;
+import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.util.Pair;
 import android.util.SparseArray;
@@ -56,6 +57,7 @@ import java.io.IOException;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +80,7 @@ public class FragmentedMp4Extractor implements Extractor {
    */
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
   @IntDef(
       flag = true,
       value = {
@@ -127,7 +130,7 @@ public class FragmentedMp4Extractor implements Extractor {
   private static final int STATE_READING_SAMPLE_CONTINUE = 4;
 
   // Workarounds.
-  @Flags private final int flags;
+  private final @Flags int flags;
   @Nullable private final Track sideloadedTrack;
 
   // Sideloaded data.
@@ -661,14 +664,23 @@ public class FragmentedMp4Extractor implements Extractor {
       emsgTrackOutput.sampleData(encodedEventMessage, sampleSize);
     }
 
-    // Output the sample metadata. This is made a little complicated because emsg-v0 atoms
-    // have presentation time *delta* while v1 atoms have absolute presentation time.
+    // Output the sample metadata.
     if (sampleTimeUs == C.TIME_UNSET) {
-      // We need the first sample timestamp in the segment before we can output the metadata.
+      // We're processing a v0 emsg atom, which contains a presentation time delta, and cannot yet
+      // calculate its absolute sample timestamp. Defer outputting the metadata until we can.
       pendingMetadataSampleInfos.addLast(
-          new MetadataSampleInfo(presentationTimeDeltaUs, sampleSize));
+          new MetadataSampleInfo(
+              presentationTimeDeltaUs, /* sampleTimeIsRelative= */ true, sampleSize));
+      pendingMetadataSampleBytes += sampleSize;
+    } else if (!pendingMetadataSampleInfos.isEmpty()) {
+      // We also need to defer outputting metadata if pendingMetadataSampleInfos is non-empty, else
+      // we will output metadata for samples in the wrong order. See:
+      // https://github.com/google/ExoPlayer/issues/9996.
+      pendingMetadataSampleInfos.addLast(
+          new MetadataSampleInfo(sampleTimeUs, /* sampleTimeIsRelative= */ false, sampleSize));
       pendingMetadataSampleBytes += sampleSize;
     } else {
+      // We can output the sample metadata immediately.
       if (timestampAdjuster != null) {
         sampleTimeUs = timestampAdjuster.adjustSampleTimestamp(sampleTimeUs);
       }
@@ -999,21 +1011,18 @@ public class FragmentedMp4Extractor implements Extractor {
 
     // Offset to the entire video timeline. In the presence of B-frames this is usually used to
     // ensure that the first frame's presentation timestamp is zero.
-    long edtsOffsetUs = 0;
+    long edtsOffset = 0;
 
     // Currently we only support a single edit that moves the entire media timeline (indicated by
     // duration == 0). Other uses of edit lists are uncommon and unsupported.
     if (track.editListDurations != null
         && track.editListDurations.length == 1
         && track.editListDurations[0] == 0) {
-      edtsOffsetUs =
-          Util.scaleLargeTimestamp(
-              castNonNull(track.editListMediaTimes)[0], C.MICROS_PER_SECOND, track.timescale);
+      edtsOffset = castNonNull(track.editListMediaTimes)[0];
     }
 
     int[] sampleSizeTable = fragment.sampleSizeTable;
-    int[] sampleCompositionTimeOffsetUsTable = fragment.sampleCompositionTimeOffsetUsTable;
-    long[] sampleDecodingTimeUsTable = fragment.sampleDecodingTimeUsTable;
+    long[] samplePresentationTimesUs = fragment.samplePresentationTimesUs;
     boolean[] sampleIsSyncFrameTable = fragment.sampleIsSyncFrameTable;
 
     boolean workaroundEveryVideoFrameIsSyncFrame =
@@ -1033,22 +1042,20 @@ public class FragmentedMp4Extractor implements Extractor {
           sampleFlagsPresent
               ? trun.readInt()
               : (i == 0 && firstSampleFlagsPresent) ? firstSampleFlags : defaultSampleValues.flags;
+      int sampleCompositionTimeOffset = 0;
       if (sampleCompositionTimeOffsetsPresent) {
         // The BMFF spec (ISO 14496-12) states that sample offsets should be unsigned integers in
         // version 0 trun boxes, however a significant number of streams violate the spec and use
         // signed integers instead. It's safe to always decode sample offsets as signed integers
         // here, because unsigned integers will still be parsed correctly (unless their top bit is
         // set, which is never true in practice because sample offsets are always small).
-        int sampleOffset = trun.readInt();
-        sampleCompositionTimeOffsetUsTable[i] =
-            (int) ((sampleOffset * C.MICROS_PER_SECOND) / timescale);
-      } else {
-        sampleCompositionTimeOffsetUsTable[i] = 0;
+        sampleCompositionTimeOffset = trun.readInt();
       }
-      sampleDecodingTimeUsTable[i] =
-          Util.scaleLargeTimestamp(cumulativeTime, C.MICROS_PER_SECOND, timescale) - edtsOffsetUs;
+      long samplePresentationTime = cumulativeTime + sampleCompositionTimeOffset - edtsOffset;
+      samplePresentationTimesUs[i] =
+          Util.scaleLargeTimestamp(samplePresentationTime, C.MICROS_PER_SECOND, timescale);
       if (!fragment.nextFragmentDecodeTimeIncludesMoov) {
-        sampleDecodingTimeUsTable[i] += trackBundle.moovSampleTable.durationUs;
+        samplePresentationTimesUs[i] += trackBundle.moovSampleTable.durationUs;
       }
       sampleSizeTable[i] = sampleSize;
       sampleIsSyncFrameTable[i] =
@@ -1459,19 +1466,30 @@ public class FragmentedMp4Extractor implements Extractor {
     return true;
   }
 
+  /**
+   * Called immediately after outputting a non-metadata sample, to output any pending metadata
+   * samples.
+   *
+   * @param sampleTimeUs The timestamp of the non-metadata sample that was just output.
+   */
   private void outputPendingMetadataSamples(long sampleTimeUs) {
     while (!pendingMetadataSampleInfos.isEmpty()) {
-      MetadataSampleInfo sampleInfo = pendingMetadataSampleInfos.removeFirst();
-      pendingMetadataSampleBytes -= sampleInfo.size;
-      long metadataTimeUs = sampleTimeUs + sampleInfo.presentationTimeDeltaUs;
+      MetadataSampleInfo metadataSampleInfo = pendingMetadataSampleInfos.removeFirst();
+      pendingMetadataSampleBytes -= metadataSampleInfo.size;
+      long metadataSampleTimeUs = metadataSampleInfo.sampleTimeUs;
+      if (metadataSampleInfo.sampleTimeIsRelative) {
+        // The metadata sample timestamp is relative to the timestamp of the non-metadata sample
+        // that was just output. Make it absolute.
+        metadataSampleTimeUs += sampleTimeUs;
+      }
       if (timestampAdjuster != null) {
-        metadataTimeUs = timestampAdjuster.adjustSampleTimestamp(metadataTimeUs);
+        metadataSampleTimeUs = timestampAdjuster.adjustSampleTimestamp(metadataSampleTimeUs);
       }
       for (TrackOutput emsgTrackOutput : emsgTrackOutputs) {
         emsgTrackOutput.sampleMetadata(
-            metadataTimeUs,
+            metadataSampleTimeUs,
             C.BUFFER_FLAG_KEY_FRAME,
-            sampleInfo.size,
+            metadataSampleInfo.size,
             pendingMetadataSampleBytes,
             null);
       }
@@ -1577,11 +1595,13 @@ public class FragmentedMp4Extractor implements Extractor {
   /** Holds data corresponding to a metadata sample. */
   private static final class MetadataSampleInfo {
 
-    public final long presentationTimeDeltaUs;
+    public final long sampleTimeUs;
+    public final boolean sampleTimeIsRelative;
     public final int size;
 
-    public MetadataSampleInfo(long presentationTimeDeltaUs, int size) {
-      this.presentationTimeDeltaUs = presentationTimeDeltaUs;
+    public MetadataSampleInfo(long sampleTimeUs, boolean sampleTimeIsRelative, int size) {
+      this.sampleTimeUs = sampleTimeUs;
+      this.sampleTimeIsRelative = sampleTimeIsRelative;
       this.size = size;
     }
   }
@@ -1689,8 +1709,7 @@ public class FragmentedMp4Extractor implements Extractor {
     }
 
     /** Returns the {@link C.BufferFlags} corresponding to the current sample. */
-    @C.BufferFlags
-    public int getCurrentSampleFlags() {
+    public @C.BufferFlags int getCurrentSampleFlags() {
       int flags =
           !currentlyInFragment
               ? moovSampleTable.flags[currentSampleIndex]

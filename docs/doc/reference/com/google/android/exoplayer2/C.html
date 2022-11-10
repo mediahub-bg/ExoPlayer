@@ -25,8 +25,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
-var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
+var data = {"i0":41,"i1":41,"i2":41,"i3":41,"i4":41};
+var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -175,58 +175,58 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.AudioFocusGain.html" title="annotation in com.google.android.exoplayer2">C.AudioFocusGain</a></span></code></th>
-<td class="colLast">
-<div class="block">Audio focus types.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.AudioUsage.html" title="annotation in com.google.android.exoplayer2">C.AudioUsage</a></span></code></th>
 <td class="colLast">
 <div class="block">Usage types for audio attributes.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.BufferFlags.html" title="annotation in com.google.android.exoplayer2">C.BufferFlags</a></span></code></th>
 <td class="colLast">
 <div class="block">Flags which can apply to a buffer containing a media sample.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.ColorRange.html" title="annotation in com.google.android.exoplayer2">C.ColorRange</a></span></code></th>
 <td class="colLast">
 <div class="block">Video color range.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.ColorSpace.html" title="annotation in com.google.android.exoplayer2">C.ColorSpace</a></span></code></th>
 <td class="colLast">
 <div class="block">Video colorspaces.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.ColorTransfer.html" title="annotation in com.google.android.exoplayer2">C.ColorTransfer</a></span></code></th>
 <td class="colLast">
 <div class="block">Video color transfer characteristics.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.ContentType.html" title="annotation in com.google.android.exoplayer2">C.ContentType</a></span></code></th>
 <td class="colLast">
 <div class="block">Represents a streaming or other media type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.CryptoMode.html" title="annotation in com.google.android.exoplayer2">C.CryptoMode</a></span></code></th>
 <td class="colLast">
 <div class="block">Crypto modes for a codec.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.CryptoType.html" title="annotation in com.google.android.exoplayer2">C.CryptoType</a></span></code></th>
+<td class="colLast">
+<div class="block">Types of crypto implementation.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -287,6 +287,20 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.SelectionReason.html" title="annotation in com.google.android.exoplayer2">C.SelectionReason</a></span></code></th>
+<td class="colLast">
+<div class="block">Represents a reason for selection.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.SpatializationBehavior.html" title="annotation in com.google.android.exoplayer2">C.SpatializationBehavior</a></span></code></th>
+<td class="colLast">
+<div class="block">Represents the behavior affecting whether spatialization will be used.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.StereoMode.html" title="annotation in com.google.android.exoplayer2">C.StereoMode</a></span></code></th>
 <td class="colLast">
 <div class="block">The stereo mode for 360/3D/VR videos.</div>
@@ -297,6 +311,20 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.StreamType.html" title="annotation in com.google.android.exoplayer2">C.StreamType</a></span></code></th>
 <td class="colLast">
 <div class="block">Stream types for an <a href="https://developer.android.com/reference/android/media/AudioTrack.html" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioTrack</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.TrackType.html" title="annotation in com.google.android.exoplayer2">C.TrackType</a></span></code></th>
+<td class="colLast">
+<div class="block">Represents a type of media track.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static interface&nbsp;</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="C.VideoChangeFrameRateStrategy.html" title="annotation in com.google.android.exoplayer2">C.VideoChangeFrameRateStrategy</a></span></code></th>
+<td class="colLast">
+<div class="block">Strategies for calling <a href="https://developer.android.com/reference/android/view/Surface.html#setFrameRate(float,int,int)" title="class or interface in android.view" class="externalLink" target="_top"><code>Surface.setFrameRate(float, int, int)</code></a>.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -364,7 +392,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ASCII_NAME">ASCII_NAME</a></span></code></th>
 <td class="colLast">
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 </td>
 </tr>
@@ -377,161 +405,136 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#AUDIOFOCUS_GAIN">AUDIOFOCUS_GAIN</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#AUDIOFOCUS_GAIN_TRANSIENT">AUDIOFOCUS_GAIN_TRANSIENT</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE">AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK">AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#AUDIOFOCUS_NONE">AUDIOFOCUS_NONE</a></span></code></th>
-<td class="colLast">&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BITS_PER_BYTE">BITS_PER_BYTE</a></span></code></th>
 <td class="colLast">
 <div class="block">The number of bits per byte.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BUFFER_FLAG_DECODE_ONLY">BUFFER_FLAG_DECODE_ONLY</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates that a buffer should be decoded but not rendered.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BUFFER_FLAG_ENCRYPTED">BUFFER_FLAG_ENCRYPTED</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates that a buffer is (at least partially) encrypted.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BUFFER_FLAG_END_OF_STREAM">BUFFER_FLAG_END_OF_STREAM</a></span></code></th>
 <td class="colLast">
 <div class="block">Flag for empty buffers that signal that the end of the stream was reached.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BUFFER_FLAG_HAS_SUPPLEMENTAL_DATA">BUFFER_FLAG_HAS_SUPPLEMENTAL_DATA</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates that a buffer has supplemental data.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BUFFER_FLAG_KEY_FRAME">BUFFER_FLAG_KEY_FRAME</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates that a buffer holds a synchronization sample.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BUFFER_FLAG_LAST_SAMPLE">BUFFER_FLAG_LAST_SAMPLE</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates that a buffer is known to contain the last media sample of the stream.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#BYTES_PER_FLOAT">BYTES_PER_FLOAT</a></span></code></th>
 <td class="colLast">
 <div class="block">The number of bytes per float.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CENC_TYPE_cbc1">CENC_TYPE_cbc1</a></span></code></th>
 <td class="colLast">
 <div class="block">"cbc1" scheme type name as defined in ISO/IEC 23001-7:2016.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CENC_TYPE_cbcs">CENC_TYPE_cbcs</a></span></code></th>
 <td class="colLast">
 <div class="block">"cbcs" scheme type name as defined in ISO/IEC 23001-7:2016.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CENC_TYPE_cenc">CENC_TYPE_cenc</a></span></code></th>
 <td class="colLast">
 <div class="block">"cenc" scheme type name as defined in ISO/IEC 23001-7:2016.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CENC_TYPE_cens">CENC_TYPE_cens</a></span></code></th>
 <td class="colLast">
 <div class="block">"cens" scheme type name as defined in ISO/IEC 23001-7:2016.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/util/UUID.html" title="class or interface in java.util" class="externalLink" target="_top">UUID</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CLEARKEY_UUID">CLEARKEY_UUID</a></span></code></th>
 <td class="colLast">
 <div class="block">UUID for the ClearKey DRM scheme.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_RANGE_FULL">COLOR_RANGE_FULL</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_RANGE_LIMITED">COLOR_RANGE_LIMITED</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_SPACE_BT2020">COLOR_SPACE_BT2020</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_SPACE_BT601">COLOR_SPACE_BT601</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_SPACE_BT709">COLOR_SPACE_BT709</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_TRANSFER_HLG">COLOR_TRANSFER_HLG</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_TRANSFER_SDR">COLOR_TRANSFER_SDR</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COLOR_TRANSFER_ST2084">COLOR_TRANSFER_ST2084</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/util/UUID.html" title="class or interface in java.util" class="externalLink" target="_top">UUID</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#COMMON_PSSH_UUID">COMMON_PSSH_UUID</a></span></code></th>
 <td class="colLast">
@@ -539,54 +542,83 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  box</a>.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CONTENT_TYPE_MOVIE">CONTENT_TYPE_MOVIE</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CONTENT_TYPE_MUSIC">CONTENT_TYPE_MUSIC</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CONTENT_TYPE_SONIFICATION">CONTENT_TYPE_SONIFICATION</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CONTENT_TYPE_SPEECH">CONTENT_TYPE_SPEECH</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CONTENT_TYPE_UNKNOWN">CONTENT_TYPE_UNKNOWN</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CRYPTO_MODE_AES_CBC">CRYPTO_MODE_AES_CBC</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CRYPTO_MODE_AES_CTR">CRYPTO_MODE_AES_CTR</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CRYPTO_MODE_UNENCRYPTED">CRYPTO_MODE_UNENCRYPTED</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CRYPTO_TYPE_CUSTOM_BASE">CRYPTO_TYPE_CUSTOM_BASE</a></span></code></th>
+<td class="colLast">
+<div class="block">Applications or extensions may define custom <code>CRYPTO_TYPE_*</code> constants greater than or
+ equal to this value.</div>
+</td>
+</tr>
 <tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CRYPTO_TYPE_FRAMEWORK">CRYPTO_TYPE_FRAMEWORK</a></span></code></th>
+<td class="colLast">
+<div class="block">Framework crypto in which a <a href="https://developer.android.com/reference/android/media/MediaCodec.html" title="class or interface in android.media" class="externalLink"><code>MediaCodec</code></a> is configured with a <a href="https://developer.android.com/reference/android/media/MediaCrypto.html?is-external=true" title="class or interface in android.media" class="externalLink" target="_top"><code>MediaCrypto</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CRYPTO_TYPE_NONE">CRYPTO_TYPE_NONE</a></span></code></th>
+<td class="colLast">
+<div class="block">No crypto.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#CRYPTO_TYPE_UNSUPPORTED">CRYPTO_TYPE_UNSUPPORTED</a></span></code></th>
+<td class="colLast">
+<div class="block">An unsupported crypto type.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_AD">DATA_TYPE_AD</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for ads loader data.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_CUSTOM_BASE">DATA_TYPE_CUSTOM_BASE</a></span></code></th>
 <td class="colLast">
@@ -594,203 +626,203 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  equal to this value.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_DRM">DATA_TYPE_DRM</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for drm or encryption data.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_MANIFEST">DATA_TYPE_MANIFEST</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for a manifest file.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_MEDIA">DATA_TYPE_MEDIA</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for media, typically containing media samples.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_MEDIA_INITIALIZATION">DATA_TYPE_MEDIA_INITIALIZATION</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for media, typically containing only initialization data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_MEDIA_PROGRESSIVE_LIVE">DATA_TYPE_MEDIA_PROGRESSIVE_LIVE</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for live progressive media streams, typically containing media samples.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_TIME_SYNCHRONIZATION">DATA_TYPE_TIME_SYNCHRONIZATION</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for time synchronization data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DATA_TYPE_UNKNOWN">DATA_TYPE_UNKNOWN</a></span></code></th>
 <td class="colLast">
 <div class="block">A data type constant for data of unknown or unspecified type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DEFAULT_BUFFER_SEGMENT_SIZE">DEFAULT_BUFFER_SEGMENT_SIZE</a></span></code></th>
 <td class="colLast">
 <div class="block">A default size in bytes for an individual allocation that forms part of a larger buffer.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
+<tr class="rowColor">
+<td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS">DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS</a></span></code></th>
 <td class="colLast">
 <div class="block">A default maximum position for which a seek to previous will seek to the previous window, in
  milliseconds.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DEFAULT_SEEK_BACK_INCREMENT_MS">DEFAULT_SEEK_BACK_INCREMENT_MS</a></span></code></th>
 <td class="colLast">
 <div class="block">A default seek back increment, in milliseconds.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#DEFAULT_SEEK_FORWARD_INCREMENT_MS">DEFAULT_SEEK_FORWARD_INCREMENT_MS</a></span></code></th>
 <td class="colLast">
 <div class="block">A default seek forward increment, in milliseconds.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AAC_ELD">ENCODING_AAC_ELD</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AAC_ER_BSAC">ENCODING_AAC_ER_BSAC</a></span></code></th>
 <td class="colLast">
 <div class="block">AAC Error Resilient Bit-Sliced Arithmetic Coding.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AAC_HE_V1">ENCODING_AAC_HE_V1</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AAC_HE_V2">ENCODING_AAC_HE_V2</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AAC_LC">ENCODING_AAC_LC</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AAC_XHE">ENCODING_AAC_XHE</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AC3">ENCODING_AC3</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_AC4">ENCODING_AC4</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_DOLBY_TRUEHD">ENCODING_DOLBY_TRUEHD</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_DTS">ENCODING_DTS</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_DTS_HD">ENCODING_DTS_HD</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_E_AC3">ENCODING_E_AC3</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_E_AC3_JOC">ENCODING_E_AC3_JOC</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_INVALID">ENCODING_INVALID</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_MP3">ENCODING_MP3</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_PCM_16BIT">ENCODING_PCM_16BIT</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_PCM_16BIT_BIG_ENDIAN">ENCODING_PCM_16BIT_BIG_ENDIAN</a></span></code></th>
 <td class="colLast">
 <div class="block">Like <a href="#ENCODING_PCM_16BIT"><code>ENCODING_PCM_16BIT</code></a>, but with the bytes in big endian order.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_PCM_24BIT">ENCODING_PCM_24BIT</a></span></code></th>
 <td class="colLast">
 <div class="block">PCM encoding with 24 bits per sample.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_PCM_32BIT">ENCODING_PCM_32BIT</a></span></code></th>
 <td class="colLast">
 <div class="block">PCM encoding with 32 bits per sample.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_PCM_8BIT">ENCODING_PCM_8BIT</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ENCODING_PCM_FLOAT">ENCODING_PCM_FLOAT</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#FLAG_AUDIBILITY_ENFORCED">FLAG_AUDIBILITY_ENFORCED</a></span></code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#FORMAT_EXCEEDS_CAPABILITIES">FORMAT_EXCEEDS_CAPABILITIES</a></span></code></th>
 <td class="colLast">
@@ -798,14 +830,14 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  properties of the format exceed the renderer's capabilities.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#FORMAT_HANDLED">FORMAT_HANDLED</a></span></code></th>
 <td class="colLast">
 <div class="block">The <code>Renderer</code> is capable of rendering the format.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#FORMAT_UNSUPPORTED_DRM">FORMAT_UNSUPPORTED_DRM</a></span></code></th>
 <td class="colLast">
@@ -813,7 +845,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  capable of rendering the format because the format's drm protection is not supported.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#FORMAT_UNSUPPORTED_SUBTYPE">FORMAT_UNSUPPORTED_SUBTYPE</a></span></code></th>
 <td class="colLast">
@@ -822,7 +854,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  sub-type is not supported.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#FORMAT_UNSUPPORTED_TYPE">FORMAT_UNSUPPORTED_TYPE</a></span></code></th>
 <td class="colLast">
@@ -830,347 +862,275 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  the format's top-level type, or because it's a specialized renderer for a different MIME type.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#INDEX_UNSET">INDEX_UNSET</a></span></code></th>
 <td class="colLast">
 <div class="block">Represents an unset or unknown index.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ISO88591_NAME">ISO88591_NAME</a></span></code></th>
 <td class="colLast">
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#LANGUAGE_UNDETERMINED">LANGUAGE_UNDETERMINED</a></span></code></th>
 <td class="colLast">
 <div class="block">Represents an undetermined language as an ISO 639-2 language code.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#LENGTH_UNSET">LENGTH_UNSET</a></span></code></th>
 <td class="colLast">
 <div class="block">Represents an unset or unknown length.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MICROS_PER_SECOND">MICROS_PER_SECOND</a></span></code></th>
 <td class="colLast">
 <div class="block">The number of microseconds in one second.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MILLIS_PER_SECOND">MILLIS_PER_SECOND</a></span></code></th>
 <td class="colLast">
 <div class="block">The number of milliseconds in one second.</div>
 </td>
 </tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_CUSTOM_BASE">MSG_CUSTOM_BASE</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_CUSTOM_BASE</code>.</div>
-</div>
-</td>
-</tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_SET_AUDIO_ATTRIBUTES">MSG_SET_AUDIO_ATTRIBUTES</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_AUDIO_ATTRIBUTES</code>.</div>
-</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_SET_AUX_EFFECT_INFO">MSG_SET_AUX_EFFECT_INFO</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_AUX_EFFECT_INFO</code>.</div>
-</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_SET_CAMERA_MOTION_LISTENER">MSG_SET_CAMERA_MOTION_LISTENER</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_CAMERA_MOTION_LISTENER</code>.</div>
-</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_SET_SCALING_MODE">MSG_SET_SCALING_MODE</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_SCALING_MODE</code>.</div>
-</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_SET_SURFACE">MSG_SET_SURFACE</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_VIDEO_OUTPUT</code>.</div>
-</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_SET_VIDEO_FRAME_METADATA_LISTENER">MSG_SET_VIDEO_FRAME_METADATA_LISTENER</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_VIDEO_FRAME_METADATA_LISTENER</code>.</div>
-</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static int</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#MSG_SET_VOLUME">MSG_SET_VOLUME</a></span></code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_VOLUME</code>.</div>
-</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NANOS_PER_SECOND">NANOS_PER_SECOND</a></span></code></th>
 <td class="colLast">
 <div class="block">The number of nanoseconds in one second.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_2G">NETWORK_TYPE_2G</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for a 2G cellular connection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_3G">NETWORK_TYPE_3G</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for a 3G cellular connection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_4G">NETWORK_TYPE_4G</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for a 4G cellular connection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_5G_NSA">NETWORK_TYPE_5G_NSA</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for a 5G non-stand-alone (NSA) cellular connection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_5G_SA">NETWORK_TYPE_5G_SA</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for a 5G stand-alone (SA) cellular connection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_CELLULAR_UNKNOWN">NETWORK_TYPE_CELLULAR_UNKNOWN</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for cellular connections which cannot be mapped to one of <a href="#NETWORK_TYPE_2G"><code>NETWORK_TYPE_2G</code></a>, <a href="#NETWORK_TYPE_3G"><code>NETWORK_TYPE_3G</code></a>, or <a href="#NETWORK_TYPE_4G"><code>NETWORK_TYPE_4G</code></a>.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_ETHERNET">NETWORK_TYPE_ETHERNET</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for an Ethernet connection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_OFFLINE">NETWORK_TYPE_OFFLINE</a></span></code></th>
 <td class="colLast">
 <div class="block">No network connection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_OTHER">NETWORK_TYPE_OTHER</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for other connections which are not Wifi or cellular (e.g.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_UNKNOWN">NETWORK_TYPE_UNKNOWN</a></span></code></th>
 <td class="colLast">
 <div class="block">Unknown network type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#NETWORK_TYPE_WIFI">NETWORK_TYPE_WIFI</a></span></code></th>
 <td class="colLast">
 <div class="block">Network type for a Wifi connection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PERCENTAGE_UNSET">PERCENTAGE_UNSET</a></span></code></th>
 <td class="colLast">
 <div class="block">Represents an unset or unknown percentage.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/util/UUID.html" title="class or interface in java.util" class="externalLink" target="_top">UUID</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PLAYREADY_UUID">PLAYREADY_UUID</a></span></code></th>
 <td class="colLast">
 <div class="block">UUID for the PlayReady DRM scheme.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#POSITION_UNSET">POSITION_UNSET</a></span></code></th>
 <td class="colLast">
 <div class="block">Represents an unset or unknown position.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PRIORITY_DOWNLOAD">PRIORITY_DOWNLOAD</a></span></code></th>
 <td class="colLast">
 <div class="block">Priority for media downloading.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PRIORITY_PLAYBACK">PRIORITY_PLAYBACK</a></span></code></th>
 <td class="colLast">
 <div class="block">Priority for media playback.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PROJECTION_CUBEMAP">PROJECTION_CUBEMAP</a></span></code></th>
 <td class="colLast">
 <div class="block">Cube map projection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PROJECTION_EQUIRECTANGULAR">PROJECTION_EQUIRECTANGULAR</a></span></code></th>
 <td class="colLast">
 <div class="block">Equirectangular spherical projection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PROJECTION_MESH">PROJECTION_MESH</a></span></code></th>
 <td class="colLast">
 <div class="block">3-D mesh projection.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#PROJECTION_RECTANGULAR">PROJECTION_RECTANGULAR</a></span></code></th>
 <td class="colLast">
 <div class="block">Conventional rectangular projection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static float</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#RATE_UNSET">RATE_UNSET</a></span></code></th>
 <td class="colLast">
 <div class="block">Represents an unset or unknown rate.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#RESULT_BUFFER_READ">RESULT_BUFFER_READ</a></span></code></th>
 <td class="colLast">
 <div class="block">A return value for methods where a buffer was read.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#RESULT_END_OF_INPUT">RESULT_END_OF_INPUT</a></span></code></th>
 <td class="colLast">
 <div class="block">A return value for methods where the end of an input was encountered.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#RESULT_FORMAT_READ">RESULT_FORMAT_READ</a></span></code></th>
 <td class="colLast">
 <div class="block">A return value for methods where a format was read.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#RESULT_MAX_LENGTH_EXCEEDED">RESULT_MAX_LENGTH_EXCEEDED</a></span></code></th>
 <td class="colLast">
 <div class="block">A return value for methods where the length of parsed data exceeds the maximum length allowed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#RESULT_NOTHING_READ">RESULT_NOTHING_READ</a></span></code></th>
 <td class="colLast">
 <div class="block">A return value for methods where nothing was read.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_ALTERNATE">ROLE_FLAG_ALTERNATE</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates an alternate track.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_CAPTION">ROLE_FLAG_CAPTION</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains captions.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_COMMENTARY">ROLE_FLAG_COMMENTARY</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains commentary, for example from the director.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_DESCRIBES_MUSIC_AND_SOUND">ROLE_FLAG_DESCRIBES_MUSIC_AND_SOUND</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains a textual description of music and sound.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_DESCRIBES_VIDEO">ROLE_FLAG_DESCRIBES_VIDEO</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains an audio or textual description of a video track.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_DUB">ROLE_FLAG_DUB</a></span></code></th>
 <td class="colLast">
@@ -1178,77 +1138,77 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  translated captions.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_EASY_TO_READ">ROLE_FLAG_EASY_TO_READ</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains a text that has been edited for ease of reading.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_EMERGENCY">ROLE_FLAG_EMERGENCY</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains information about a current emergency.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_ENHANCED_DIALOG_INTELLIGIBILITY">ROLE_FLAG_ENHANCED_DIALOG_INTELLIGIBILITY</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track is designed for improved intelligibility of dialogue.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_MAIN">ROLE_FLAG_MAIN</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates a main track.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_SIGN">ROLE_FLAG_SIGN</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains a visual sign-language interpretation of an audio track.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_SUBTITLE">ROLE_FLAG_SUBTITLE</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains subtitles.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_SUPPLEMENTARY">ROLE_FLAG_SUPPLEMENTARY</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates a supplementary track, meaning the track has lower importance than the main track(s).</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_TRANSCRIBES_DIALOG">ROLE_FLAG_TRANSCRIBES_DIALOG</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track contains a transcription of spoken dialog.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#ROLE_FLAG_TRICK_PLAY">ROLE_FLAG_TRICK_PLAY</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates the track is intended for trick play.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SANS_SERIF_NAME">SANS_SERIF_NAME</a></span></code></th>
 <td class="colLast">
 <div class="block">The name of the sans-serif font family.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_FLAG_AUTOSELECT">SELECTION_FLAG_AUTOSELECT</a></span></code></th>
 <td class="colLast">
@@ -1256,14 +1216,14 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  preference.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_FLAG_DEFAULT">SELECTION_FLAG_DEFAULT</a></span></code></th>
 <td class="colLast">
 <div class="block">Indicates that the track should be selected if user preferences do not state otherwise.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_FLAG_FORCED">SELECTION_FLAG_FORCED</a></span></code></th>
 <td class="colLast">
@@ -1271,14 +1231,14 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  selected audio track and user preferences do not state otherwise.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_REASON_ADAPTIVE">SELECTION_REASON_ADAPTIVE</a></span></code></th>
 <td class="colLast">
 <div class="block">A selection reason constant for an adaptive track selection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_REASON_CUSTOM_BASE">SELECTION_REASON_CUSTOM_BASE</a></span></code></th>
 <td class="colLast">
@@ -1286,39 +1246,60 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
  or equal to this value.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_REASON_INITIAL">SELECTION_REASON_INITIAL</a></span></code></th>
 <td class="colLast">
 <div class="block">A selection reason constant for an initial track selection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_REASON_MANUAL">SELECTION_REASON_MANUAL</a></span></code></th>
 <td class="colLast">
 <div class="block">A selection reason constant for an manual (i.e.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_REASON_TRICK_PLAY">SELECTION_REASON_TRICK_PLAY</a></span></code></th>
 <td class="colLast">
 <div class="block">A selection reason constant for a trick play track selection.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SELECTION_REASON_UNKNOWN">SELECTION_REASON_UNKNOWN</a></span></code></th>
 <td class="colLast">
 <div class="block">A selection reason constant for selections whose reasons are unknown or unspecified.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SERIF_NAME">SERIF_NAME</a></span></code></th>
 <td class="colLast">
 <div class="block">The name of the serif font family.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SPATIALIZATION_BEHAVIOR_AUTO">SPATIALIZATION_BEHAVIOR_AUTO</a></span></code></th>
+<td class="colLast">
+<div class="block">See AudioAttributes#SPATIALIZATION_BEHAVIOR_AUTO</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SPATIALIZATION_BEHAVIOR_NEVER">SPATIALIZATION_BEHAVIOR_NEVER</a></span></code></th>
+<td class="colLast">
+<div class="block">See AudioAttributes#SPATIALIZATION_BEHAVIOR_NEVER</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#SSAI_SCHEME">SSAI_SCHEME</a></span></code></th>
+<td class="colLast">
+<div class="block">The <a href="https://developer.android.com/reference/android/net/Uri.html#getScheme()" title="class or interface in android.net" class="externalLink" target="_top"><code>URI scheme</code></a> used for content with server side ad insertion.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -1598,7 +1579,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#UTF16_NAME">UTF16_NAME</a></span></code></th>
 <td class="colLast">
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 </td>
 </tr>
@@ -1607,7 +1588,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#UTF16LE_NAME">UTF16LE_NAME</a></span></code></th>
 <td class="colLast">
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 </td>
 </tr>
@@ -1616,7 +1597,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#UTF8_NAME">UTF8_NAME</a></span></code></th>
 <td class="colLast">
 <div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 </td>
 </tr>
@@ -1625,6 +1606,20 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#UUID_NIL">UUID_NIL</a></span></code></th>
 <td class="colLast">
 <div class="block">The Nil UUID as defined by <a href="https://tools.ietf.org/html/rfc4122#section-4.1.7">RFC4122</a>.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF">VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF</a></span></code></th>
+<td class="colLast">
+<div class="block">Strategy to never call <a href="https://developer.android.com/reference/android/view/Surface.html#setFrameRate(float,int,int)" title="class or interface in android.view" class="externalLink" target="_top"><code>Surface.setFrameRate(float, int, int)</code></a>.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static int</code></td>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS">VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS</a></span></code></th>
+<td class="colLast">
+<div class="block">Strategy to call <a href="https://developer.android.com/reference/android/view/Surface.html#setFrameRate(float,int,int)" title="class or interface in android.view" class="externalLink"><code>Surface.setFrameRate(float, int, int)</code></a> with <a href="https://developer.android.com/reference/android/view/Surface.html?is-external=true#CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS" title="class or interface in android.view" class="externalLink" target="_top"><code>Surface.CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS</code></a> when the output frame rate is known.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -1711,7 +1706,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t1" class="tableTab"><span><a href="javascript:show(1);">Static Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
@@ -1721,34 +1716,45 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <td class="colFirst"><code>static int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#generateAudioSessionIdV21(android.content.Context)">generateAudioSessionIdV21</a></span>&#8203;(<a href="https://developer.android.com/reference/android/content/Context.html" title="class or interface in android.content" class="externalLink" target="_top">Context</a>&nbsp;context)</code></th>
 <td class="colLast">
-<div class="block">Returns a newly generated audio session identifier, or <a href="https://developer.android.com/reference/android/media/AudioManager.html#ERROR" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.ERROR</code></a> if an error
- occurred in which case audio playback may fail.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#generateAudioSessionIdV21(android.content.Context)"><code>Util.generateAudioSessionIdV21(Context)</code></a>.</div>
+</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
-<td class="colFirst"><code>static int</code></td>
+<td class="colFirst"><code>static @com.google.android.exoplayer2.PlaybackException.ErrorCode int</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getErrorCodeForMediaDrmErrorCode(int)">getErrorCodeForMediaDrmErrorCode</a></span>&#8203;(int&nbsp;mediaDrmErrorCode)</code></th>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#getErrorCodeForMediaDrmErrorCode(int)"><code>Util.getErrorCodeForMediaDrmErrorCode(int)</code></a>.</div>
+</div>
+</td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>static <a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a></code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFormatSupportString(int)">getFormatSupportString</a></span>&#8203;(int&nbsp;formatSupport)</code></th>
+<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#getFormatSupportString(@com.google.android.exoplayer2.C.FormatSupportint)">getFormatSupportString</a></span>&#8203;(@com.google.android.exoplayer2.C.FormatSupport int&nbsp;formatSupport)</code></th>
 <td class="colLast">
-<div class="block">Returns string representation of a <a href="C.FormatSupport.html" title="annotation in com.google.android.exoplayer2"><code>C.FormatSupport</code></a> flag.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#getFormatSupportString(@com.google.android.exoplayer2.C.FormatSupportint)"><code>Util.getFormatSupportString(int)</code></a>.</div>
+</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#msToUs(long)">msToUs</a></span>&#8203;(long&nbsp;timeMs)</code></th>
 <td class="colLast">
-<div class="block">Converts a time in milliseconds to the corresponding time in microseconds, preserving <a href="#TIME_UNSET"><code>TIME_UNSET</code></a> values and <a href="#TIME_END_OF_SOURCE"><code>TIME_END_OF_SOURCE</code></a> values.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#msToUs(long)"><code>Util.msToUs(long)</code></a>.</div>
+</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static long</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#usToMs(long)">usToMs</a></span>&#8203;(long&nbsp;timeUs)</code></th>
 <td class="colLast">
-<div class="block">Converts a time in microseconds to the corresponding time in milliseconds, preserving <a href="#TIME_UNSET"><code>TIME_UNSET</code></a> and <a href="#TIME_END_OF_SOURCE"><code>TIME_END_OF_SOURCE</code></a> values.</div>
+<div class="block"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#usToMs(long)"><code>Util.usToMs(long)</code></a>.</div>
+</div>
 </td>
 </tr>
 </table>
@@ -1954,7 +1960,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
 public static final&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a> ASCII_NAME</pre>
 <div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -1971,7 +1977,7 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
 public static final&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a> UTF8_NAME</pre>
 <div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -1988,7 +1994,7 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
 public static final&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a> ISO88591_NAME</pre>
 <div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -2005,7 +2011,7 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
 public static final&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a> UTF16_NAME</pre>
 <div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -2022,7 +2028,7 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
 public static final&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a> UTF16LE_NAME</pre>
 <div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
+<div class="deprecationComment">Use <a href="https://developer.android.com/reference/java/nio/charset/StandardCharsets.html" title="class or interface in java.nio.charset" class="externalLink"><code>StandardCharsets</code></a> or <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/base/Charsets.html?is-external=true" title="class or interface in com.google.common.base" class="externalLink" target="_top"><code>Charsets</code></a> instead.</div>
 </div>
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
@@ -2055,6 +2061,77 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.SANS_SERIF_NAME">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="SSAI_SCHEME">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SSAI_SCHEME</h4>
+<pre>public static final&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink" target="_top">String</a> SSAI_SCHEME</pre>
+<div class="block">The <a href="https://developer.android.com/reference/android/net/Uri.html#getScheme()" title="class or interface in android.net" class="externalLink" target="_top"><code>URI scheme</code></a> used for content with server side ad insertion.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.SSAI_SCHEME">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="CRYPTO_TYPE_NONE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CRYPTO_TYPE_NONE</h4>
+<pre>public static final&nbsp;int CRYPTO_TYPE_NONE</pre>
+<div class="block">No crypto.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.CRYPTO_TYPE_NONE">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="CRYPTO_TYPE_UNSUPPORTED">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CRYPTO_TYPE_UNSUPPORTED</h4>
+<pre>public static final&nbsp;int CRYPTO_TYPE_UNSUPPORTED</pre>
+<div class="block">An unsupported crypto type.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.CRYPTO_TYPE_UNSUPPORTED">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="CRYPTO_TYPE_FRAMEWORK">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CRYPTO_TYPE_FRAMEWORK</h4>
+<pre>public static final&nbsp;int CRYPTO_TYPE_FRAMEWORK</pre>
+<div class="block">Framework crypto in which a <a href="https://developer.android.com/reference/android/media/MediaCodec.html" title="class or interface in android.media" class="externalLink"><code>MediaCodec</code></a> is configured with a <a href="https://developer.android.com/reference/android/media/MediaCrypto.html?is-external=true" title="class or interface in android.media" class="externalLink" target="_top"><code>MediaCrypto</code></a>.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.CRYPTO_TYPE_FRAMEWORK">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="CRYPTO_TYPE_CUSTOM_BASE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>CRYPTO_TYPE_CUSTOM_BASE</h4>
+<pre>public static final&nbsp;int CRYPTO_TYPE_CUSTOM_BASE</pre>
+<div class="block">Applications or extensions may define custom <code>CRYPTO_TYPE_*</code> constants greater than or
+ equal to this value.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.CRYPTO_TYPE_CUSTOM_BASE">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -2405,6 +2482,34 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="https://developer.android.com/reference/android/media/AudioFormat.html#ENCODING_DOLBY_TRUEHD" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioFormat.ENCODING_DOLBY_TRUEHD</code></a>, 
 <a href="../../../../constant-values.html#com.google.android.exoplayer2.C.ENCODING_DOLBY_TRUEHD">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="SPATIALIZATION_BEHAVIOR_AUTO">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SPATIALIZATION_BEHAVIOR_AUTO</h4>
+<pre>public static final&nbsp;int SPATIALIZATION_BEHAVIOR_AUTO</pre>
+<div class="block">See AudioAttributes#SPATIALIZATION_BEHAVIOR_AUTO</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.SPATIALIZATION_BEHAVIOR_AUTO">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="SPATIALIZATION_BEHAVIOR_NEVER">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>SPATIALIZATION_BEHAVIOR_NEVER</h4>
+<pre>public static final&nbsp;int SPATIALIZATION_BEHAVIOR_NEVER</pre>
+<div class="block">See AudioAttributes#SPATIALIZATION_BEHAVIOR_NEVER</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.SPATIALIZATION_BEHAVIOR_NEVER">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -2870,76 +2975,6 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 </dl>
 </li>
 </ul>
-<a id="AUDIOFOCUS_NONE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>AUDIOFOCUS_NONE</h4>
-<pre>public static final&nbsp;int AUDIOFOCUS_NONE</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="https://developer.android.com/reference/android/media/AudioManager.html#AUDIOFOCUS_NONE" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.AUDIOFOCUS_NONE</code></a>, 
-<a href="../../../../constant-values.html#com.google.android.exoplayer2.C.AUDIOFOCUS_NONE">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="AUDIOFOCUS_GAIN">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>AUDIOFOCUS_GAIN</h4>
-<pre>public static final&nbsp;int AUDIOFOCUS_GAIN</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="https://developer.android.com/reference/android/media/AudioManager.html#AUDIOFOCUS_GAIN" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.AUDIOFOCUS_GAIN</code></a>, 
-<a href="../../../../constant-values.html#com.google.android.exoplayer2.C.AUDIOFOCUS_GAIN">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="AUDIOFOCUS_GAIN_TRANSIENT">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>AUDIOFOCUS_GAIN_TRANSIENT</h4>
-<pre>public static final&nbsp;int AUDIOFOCUS_GAIN_TRANSIENT</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="https://developer.android.com/reference/android/media/AudioManager.html#AUDIOFOCUS_GAIN_TRANSIENT" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.AUDIOFOCUS_GAIN_TRANSIENT</code></a>, 
-<a href="../../../../constant-values.html#com.google.android.exoplayer2.C.AUDIOFOCUS_GAIN_TRANSIENT">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK</h4>
-<pre>public static final&nbsp;int AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="https://developer.android.com/reference/android/media/AudioManager.html#AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK</code></a>, 
-<a href="../../../../constant-values.html#com.google.android.exoplayer2.C.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE</h4>
-<pre>public static final&nbsp;int AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE</pre>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="https://developer.android.com/reference/android/media/AudioManager.html#AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE</code></a>, 
-<a href="../../../../constant-values.html#com.google.android.exoplayer2.C.AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
 <a id="BUFFER_FLAG_KEY_FRAME">
 <!--   -->
 </a>
@@ -3105,6 +3140,35 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.VIDEO_SCALING_MODE_DEFAULT">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF</h4>
+<pre>public static final&nbsp;int VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF</pre>
+<div class="block">Strategy to never call <a href="https://developer.android.com/reference/android/view/Surface.html#setFrameRate(float,int,int)" title="class or interface in android.view" class="externalLink" target="_top"><code>Surface.setFrameRate(float, int, int)</code></a>. Use this strategy if you prefer to call
+ <a href="https://developer.android.com/reference/android/view/Surface.html#setFrameRate(float,int,int)" title="class or interface in android.view" class="externalLink" target="_top"><code>Surface.setFrameRate(float, int, int)</code></a> directly from application code.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_OFF">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
+<a id="VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS</h4>
+<pre>public static final&nbsp;int VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS</pre>
+<div class="block">Strategy to call <a href="https://developer.android.com/reference/android/view/Surface.html#setFrameRate(float,int,int)" title="class or interface in android.view" class="externalLink"><code>Surface.setFrameRate(float, int, int)</code></a> with <a href="https://developer.android.com/reference/android/view/Surface.html?is-external=true#CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS" title="class or interface in android.view" class="externalLink" target="_top"><code>Surface.CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS</code></a> when the output frame rate is known.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.VIDEO_CHANGE_FRAME_RATE_STRATEGY_ONLY_IF_SEAMLESS">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -3438,6 +3502,20 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 </dl>
 </li>
 </ul>
+<a id="TRACK_TYPE_NONE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>TRACK_TYPE_NONE</h4>
+<pre>public static final&nbsp;int TRACK_TYPE_NONE</pre>
+<div class="block">A type constant for a fake or empty track.</div>
+<dl>
+<dt><span class="seeLabel">See Also:</span></dt>
+<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.TRACK_TYPE_NONE">Constant Field Values</a></dd>
+</dl>
+</li>
+</ul>
 <a id="TRACK_TYPE_UNKNOWN">
 <!--   -->
 </a>
@@ -3547,20 +3625,6 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <dl>
 <dt><span class="seeLabel">See Also:</span></dt>
 <dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.TRACK_TYPE_CAMERA_MOTION">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="TRACK_TYPE_NONE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>TRACK_TYPE_NONE</h4>
-<pre>public static final&nbsp;int TRACK_TYPE_NONE</pre>
-<div class="block">A type constant for a fake or empty track.</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.TRACK_TYPE_NONE">Constant Field Values</a></dd>
 </dl>
 </li>
 </ul>
@@ -3712,7 +3776,7 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 <ul class="blockList">
 <li class="blockList">
 <h4>DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS</h4>
-<pre>public static final&nbsp;int DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS</pre>
+<pre>public static final&nbsp;long DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS</pre>
 <div class="block">A default maximum position for which a seek to previous will seek to the previous window, in
  milliseconds.</div>
 <dl>
@@ -3833,142 +3897,6 @@ public static final&nbsp;<a href="https://developer.android.com/reference/java/l
 
  <p>PlayReady is supported on all AndroidTV devices. Note that most other Android devices do not
  provide PlayReady support.</div>
-</li>
-</ul>
-<a id="MSG_SET_SURFACE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_SET_SURFACE</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_SET_SURFACE</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_VIDEO_OUTPUT</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_SET_SURFACE">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="MSG_SET_VOLUME">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_SET_VOLUME</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_SET_VOLUME</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_VOLUME</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_SET_VOLUME">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="MSG_SET_AUDIO_ATTRIBUTES">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_SET_AUDIO_ATTRIBUTES</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_SET_AUDIO_ATTRIBUTES</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_AUDIO_ATTRIBUTES</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_SET_AUDIO_ATTRIBUTES">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="MSG_SET_SCALING_MODE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_SET_SCALING_MODE</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_SET_SCALING_MODE</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_SCALING_MODE</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_SET_SCALING_MODE">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="MSG_SET_AUX_EFFECT_INFO">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_SET_AUX_EFFECT_INFO</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_SET_AUX_EFFECT_INFO</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_AUX_EFFECT_INFO</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_SET_AUX_EFFECT_INFO">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="MSG_SET_VIDEO_FRAME_METADATA_LISTENER">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_SET_VIDEO_FRAME_METADATA_LISTENER</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_SET_VIDEO_FRAME_METADATA_LISTENER</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_VIDEO_FRAME_METADATA_LISTENER</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_SET_VIDEO_FRAME_METADATA_LISTENER">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="MSG_SET_CAMERA_MOTION_LISTENER">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_SET_CAMERA_MOTION_LISTENER</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_SET_CAMERA_MOTION_LISTENER</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_SET_CAMERA_MOTION_LISTENER</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_SET_CAMERA_MOTION_LISTENER">Constant Field Values</a></dd>
-</dl>
-</li>
-</ul>
-<a id="MSG_CUSTOM_BASE">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>MSG_CUSTOM_BASE</h4>
-<pre><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public static final&nbsp;int MSG_CUSTOM_BASE</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use <code>Renderer.MSG_CUSTOM_BASE</code>.</div>
-</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="../../../../constant-values.html#com.google.android.exoplayer2.C.MSG_CUSTOM_BASE">Constant Field Values</a></dd>
-</dl>
 </li>
 </ul>
 <a id="STEREO_MODE_MONO">
@@ -4756,14 +4684,13 @@ public static final&nbsp;int MSG_CUSTOM_BASE</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>usToMs</h4>
-<pre class="methodSignature">public static&nbsp;long&nbsp;usToMs&#8203;(long&nbsp;timeUs)</pre>
-<div class="block">Converts a time in microseconds to the corresponding time in milliseconds, preserving <a href="#TIME_UNSET"><code>TIME_UNSET</code></a> and <a href="#TIME_END_OF_SOURCE"><code>TIME_END_OF_SOURCE</code></a> values.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>timeUs</code> - The time in microseconds.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>The corresponding time in milliseconds.</dd>
-</dl>
+<pre class="methodSignature">@InlineMe(replacement="Util.usToMs(timeUs)",
+          imports="com.google.android.exoplayer2.util.Util")
+<a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
+public static&nbsp;long&nbsp;usToMs&#8203;(long&nbsp;timeUs)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#usToMs(long)"><code>Util.usToMs(long)</code></a>.</div>
+</div>
 </li>
 </ul>
 <a id="msToUs(long)">
@@ -4772,14 +4699,13 @@ public static final&nbsp;int MSG_CUSTOM_BASE</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>msToUs</h4>
-<pre class="methodSignature">public static&nbsp;long&nbsp;msToUs&#8203;(long&nbsp;timeMs)</pre>
-<div class="block">Converts a time in milliseconds to the corresponding time in microseconds, preserving <a href="#TIME_UNSET"><code>TIME_UNSET</code></a> values and <a href="#TIME_END_OF_SOURCE"><code>TIME_END_OF_SOURCE</code></a> values.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>timeMs</code> - The time in milliseconds.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>The corresponding time in microseconds.</dd>
-</dl>
+<pre class="methodSignature">@InlineMe(replacement="Util.msToUs(timeMs)",
+          imports="com.google.android.exoplayer2.util.Util")
+<a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
+public static&nbsp;long&nbsp;msToUs&#8203;(long&nbsp;timeMs)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#msToUs(long)"><code>Util.msToUs(long)</code></a>.</div>
+</div>
 </li>
 </ul>
 <a id="generateAudioSessionIdV21(android.content.Context)">
@@ -4788,31 +4714,30 @@ public static final&nbsp;int MSG_CUSTOM_BASE</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>generateAudioSessionIdV21</h4>
-<pre class="methodSignature">@RequiresApi(21)
+<pre class="methodSignature">@InlineMe(replacement="Util.generateAudioSessionIdV21(context)",
+          imports="com.google.android.exoplayer2.util.Util")
+<a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
+@RequiresApi(21)
 public static&nbsp;int&nbsp;generateAudioSessionIdV21&#8203;(<a href="https://developer.android.com/reference/android/content/Context.html" title="class or interface in android.content" class="externalLink" target="_top">Context</a>&nbsp;context)</pre>
-<div class="block">Returns a newly generated audio session identifier, or <a href="https://developer.android.com/reference/android/media/AudioManager.html#ERROR" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.ERROR</code></a> if an error
- occurred in which case audio playback may fail.</div>
-<dl>
-<dt><span class="seeLabel">See Also:</span></dt>
-<dd><a href="https://developer.android.com/reference/android/media/AudioManager.html#generateAudioSessionId()" title="class or interface in android.media" class="externalLink" target="_top"><code>AudioManager.generateAudioSessionId()</code></a></dd>
-</dl>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#generateAudioSessionIdV21(android.content.Context)"><code>Util.generateAudioSessionIdV21(Context)</code></a>.</div>
+</div>
 </li>
 </ul>
-<a id="getFormatSupportString(int)">
+<a id="getFormatSupportString(@com.google.android.exoplayer2.C.FormatSupportint)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getFormatSupportString</h4>
-<pre class="methodSignature">public static&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;getFormatSupportString&#8203;(<a href="C.FormatSupport.html" title="annotation in com.google.android.exoplayer2" target="_top">@FormatSupport</a>
-                                            int&nbsp;formatSupport)</pre>
-<div class="block">Returns string representation of a <a href="C.FormatSupport.html" title="annotation in com.google.android.exoplayer2"><code>C.FormatSupport</code></a> flag.</div>
-<dl>
-<dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>formatSupport</code> - A <a href="C.FormatSupport.html" title="annotation in com.google.android.exoplayer2"><code>C.FormatSupport</code></a> flag.</dd>
-<dt><span class="returnLabel">Returns:</span></dt>
-<dd>A string representation of the flag.</dd>
-</dl>
+<pre class="methodSignature">@InlineMe(replacement="Util.getFormatSupportString(formatSupport)",
+          imports="com.google.android.exoplayer2.util.Util")
+<a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
+public static&nbsp;<a href="https://developer.android.com/reference/java/lang/String.html" title="class or interface in java.lang" class="externalLink">String</a>&nbsp;getFormatSupportString&#8203;(<a href="C.FormatSupport.html" title="annotation in com.google.android.exoplayer2" target="_top">@FormatSupport</a>
+                                            @com.google.android.exoplayer2.C.FormatSupport int&nbsp;formatSupport)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#getFormatSupportString(@com.google.android.exoplayer2.C.FormatSupportint)"><code>Util.getFormatSupportString(int)</code></a>.</div>
+</div>
 </li>
 </ul>
 <a id="getErrorCodeForMediaDrmErrorCode(int)">
@@ -4821,8 +4746,14 @@ public static&nbsp;int&nbsp;generateAudioSessionIdV21&#8203;(<a href="https://de
 <ul class="blockListLast">
 <li class="blockList">
 <h4>getErrorCodeForMediaDrmErrorCode</h4>
-<pre class="methodSignature"><a href="PlaybackException.ErrorCode.html" title="annotation in com.google.android.exoplayer2">@ErrorCode</a>
-public static&nbsp;int&nbsp;getErrorCodeForMediaDrmErrorCode&#8203;(int&nbsp;mediaDrmErrorCode)</pre>
+<pre class="methodSignature">@InlineMe(replacement="Util.getErrorCodeForMediaDrmErrorCode(mediaDrmErrorCode)",
+          imports="com.google.android.exoplayer2.util.Util")
+<a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
+<a href="PlaybackException.ErrorCode.html" title="annotation in com.google.android.exoplayer2">@ErrorCode</a>
+public static&nbsp;@com.google.android.exoplayer2.PlaybackException.ErrorCode int&nbsp;getErrorCodeForMediaDrmErrorCode&#8203;(int&nbsp;mediaDrmErrorCode)</pre>
+<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
+<div class="deprecationComment">Use <a href="util/Util.html#getErrorCodeForMediaDrmErrorCode(int)"><code>Util.getErrorCodeForMediaDrmErrorCode(int)</code></a>.</div>
+</div>
 </li>
 </ul>
 </li>

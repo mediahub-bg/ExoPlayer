@@ -25,11 +25,11 @@ import androidx.annotation.Nullable;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.Listener;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.robolectric.PlaybackOutput;
 import com.google.android.exoplayer2.robolectric.RobolectricUtil;
 import com.google.android.exoplayer2.robolectric.ShadowMediaCodecConfig;
@@ -46,6 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.net.SocketFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -102,8 +103,7 @@ public final class RtspPlaybackTest {
             fakeRtpDataChannel);
 
     try (RtspServer rtspServer = new RtspServer(responseProvider)) {
-      SimpleExoPlayer player =
-          createSimpleExoPlayer(rtspServer.startAndGetPortNumber(), rtpDataChannelFactory);
+      ExoPlayer player = createExoPlayer(rtspServer.startAndGetPortNumber(), rtpDataChannelFactory);
 
       PlaybackOutput playbackOutput = PlaybackOutput.register(player, capturingRenderersFactory);
       player.prepare();
@@ -125,8 +125,7 @@ public final class RtspPlaybackTest {
         new RtspServer(
             new ResponseProvider(
                 clock, ImmutableList.of(mp4aLatmRtpPacketStreamDump), fakeRtpDataChannel))) {
-      SimpleExoPlayer player =
-          createSimpleExoPlayer(rtspServer.startAndGetPortNumber(), rtpDataChannelFactory);
+      ExoPlayer player = createExoPlayer(rtspServer.startAndGetPortNumber(), rtpDataChannelFactory);
 
       AtomicReference<Throwable> playbackError = new AtomicReference<>();
       player.prepare();
@@ -147,17 +146,20 @@ public final class RtspPlaybackTest {
     }
   }
 
-  private SimpleExoPlayer createSimpleExoPlayer(
+  private ExoPlayer createExoPlayer(
       int serverRtspPortNumber, RtpDataChannel.Factory rtpDataChannelFactory) {
-    SimpleExoPlayer player =
-        new SimpleExoPlayer.Builder(applicationContext, capturingRenderersFactory)
+    ExoPlayer player =
+        new ExoPlayer.Builder(applicationContext, capturingRenderersFactory)
             .setClock(clock)
             .build();
     player.setMediaSource(
         new RtspMediaSource(
             MediaItem.fromUri(RtspTestUtils.getTestUri(serverRtspPortNumber)),
             rtpDataChannelFactory,
-            "ExoPlayer:PlaybackTest"));
+            "ExoPlayer:PlaybackTest",
+            SocketFactory.getDefault(),
+            /* debugLoggingEnabled= */ false),
+        false);
     return player;
   }
 
@@ -207,7 +209,7 @@ public final class RtspPlaybackTest {
     }
 
     @Override
-    public RtspResponse getDescribeResponse(Uri requestedUri) {
+    public RtspResponse getDescribeResponse(Uri requestedUri, RtspHeaders headers) {
       return RtspTestUtils.newDescribeResponseWithSdpMessage(
           SESSION_DESCRIPTION, rtpPacketStreamDumps, requestedUri);
     }

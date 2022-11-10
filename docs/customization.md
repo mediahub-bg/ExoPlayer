@@ -4,20 +4,20 @@ title: Customization
 
 At the core of the ExoPlayer library is the `Player` interface. A `Player`
 exposes traditional high-level media player functionality such as the ability to
-buffer media, play, pause and seek. The default implementations `ExoPlayer` and
-`SimpleExoPlayer` are designed to make few assumptions about (and hence impose
-few restrictions on) the type of media being played, how and where it is stored,
-and how it is rendered. Rather than implementing the loading and rendering of
-media directly, `ExoPlayer` implementations delegate this work to components
-that are injected when a player is created or when new media sources are passed
-to the player. Components common to all `ExoPlayer` implementations are:
+buffer media, play, pause and seek. The default implementation `ExoPlayer` is
+designed to make few assumptions about (and hence impose few restrictions on)
+the type of media being played, how and where it is stored, and how it is
+rendered. Rather than implementing the loading and rendering of media directly,
+`ExoPlayer` implementations delegate this work to components that are injected
+when a player is created or when new media sources are passed to the player.
+Components common to all `ExoPlayer` implementations are:
 
 * `MediaSource` instances that define media to be played, load the media, and
   from which the loaded media can be read. `MediaSource` instances are created
-  from `MediaItem`s by a `MediaSourceFactory` inside the player. They can also
+  from `MediaItem`s by a `MediaSource.Factory` inside the player. They can also
   be passed directly to the player using the [media source based playlist API].
-* A `MediaSourceFactory` that converts `MediaItem`s to `MediaSource`s. The
-  `MediaSourceFactory` is injected when the player is created.
+* A `MediaSource.Factory` that converts `MediaItem`s to `MediaSource`s. The
+  `MediaSource.Factory` is injected when the player is created.
 * `Renderer`s that render individual components of the media. `Renderer`s are
   injected when the player is created.
 * A `TrackSelector` that selects tracks provided by the `MediaSource` to be
@@ -53,14 +53,14 @@ default network stack with cross-protocol redirects enabled:
 HttpDataSource.Factory httpDataSourceFactory =
     new DefaultHttpDataSource.Factory().setAllowCrossProtocolRedirects(true);
 
-// Wrap the HttpDataSource.Factory in a DefaultDataSourceFactory, which adds in
+// Wrap the HttpDataSource.Factory in a DefaultDataSource.Factory, which adds in
 // support for requesting data from other sources (e.g., files, resources, etc).
-DefaultDataSourceFactory dataSourceFactory =
-    new DefaultDataSourceFactory(context, httpDataSourceFactory);
+DefaultDataSource.Factory dataSourceFactory =
+    new DefaultDataSource.Factory(context, httpDataSourceFactory);
 
 // Inject the DefaultDataSourceFactory when creating the player.
-SimpleExoPlayer player =
-    new SimpleExoPlayer.Builder(context)
+ExoPlayer player =
+    new ExoPlayer.Builder(context)
         .setMediaSourceFactory(new DefaultMediaSourceFactory(dataSourceFactory))
         .build();
 ~~~
@@ -82,7 +82,7 @@ DataSource.Factory cacheDataSourceFactory =
         .setCache(simpleCache)
         .setUpstreamDataSourceFactory(httpDataSourceFactory);
 
-SimpleExoPlayer player = new SimpleExoPlayer.Builder(context)
+ExoPlayer player = new ExoPlayer.Builder(context)
     .setMediaSourceFactory(
         new DefaultMediaSourceFactory(cacheDataSourceFactory))
     .build();
@@ -107,7 +107,7 @@ DataSource.Factory dataSourceFactory = () -> {
   return dataSource;
 };
 
-SimpleExoPlayer player = new SimpleExoPlayer.Builder(context)
+ExoPlayer player = new ExoPlayer.Builder(context)
     .setMediaSourceFactory(new DefaultMediaSourceFactory(dataSourceFactory))
     .build();
 ~~~
@@ -157,8 +157,8 @@ LoadErrorHandlingPolicy loadErrorHandlingPolicy =
       }
     };
 
-SimpleExoPlayer player =
-    new SimpleExoPlayer.Builder(context)
+ExoPlayer player =
+    new ExoPlayer.Builder(context)
         .setMediaSourceFactory(
             new DefaultMediaSourceFactory(context)
                 .setLoadErrorHandlingPolicy(loadErrorHandlingPolicy))
@@ -181,7 +181,7 @@ DefaultExtractorsFactory extractorsFactory =
     new DefaultExtractorsFactory()
         .setMp3ExtractorFlags(Mp3Extractor.FLAG_ENABLE_INDEX_SEEKING);
 
-SimpleExoPlayer player = new SimpleExoPlayer.Builder(context)
+ExoPlayer player = new ExoPlayer.Builder(context)
     .setMediaSourceFactory(
         new DefaultMediaSourceFactory(context, extractorsFactory))
     .build();
@@ -245,9 +245,9 @@ required. Some use cases for custom implementations are:
   appropriate if you wish to obtain media samples to feed to renderers in a
   custom way, or if you wish to implement custom `MediaSource` compositing
   behavior.
-* `MediaSourceFactory` &ndash; Implementing a custom `MediaSourceFactory` allows
-  an application to customize the way in which `MediaSource`s are created from
-  `MediaItem`s.
+* `MediaSource.Factory` &ndash; Implementing a custom `MediaSource.Factory`
+  allows an application to customize the way in which `MediaSource`s are created
+  from `MediaItem`s.
 * `DataSource` &ndash; ExoPlayer’s upstream package already contains a number of
   `DataSource` implementations for different use cases. You may want to
   implement you own `DataSource` class to load data in another way, such as over

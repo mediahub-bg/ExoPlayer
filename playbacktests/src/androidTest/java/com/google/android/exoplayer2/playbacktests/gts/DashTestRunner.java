@@ -22,13 +22,14 @@ import android.media.UnsupportedSchemeException;
 import android.view.Surface;
 import android.widget.FrameLayout;
 import androidx.annotation.RequiresApi;
+import androidx.annotation.Size;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.platform.app.InstrumentationRegistry;
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.MediaItem;
 import com.google.android.exoplayer2.RendererCapabilities;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
@@ -51,8 +52,8 @@ import com.google.android.exoplayer2.trackselection.ExoTrackSelection;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.RandomTrackSelection;
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.DefaultDataSource;
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource;
 import com.google.android.exoplayer2.upstream.DefaultLoadErrorHandlingPolicy;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Log;
@@ -85,7 +86,9 @@ import java.util.List;
   private static final String WIDEVINE_SECURITY_LEVEL_3 = "L3";
   private static final String SECURITY_LEVEL_PROPERTY = "securityLevel";
 
+  @Size(max = 23)
   private final String tag;
+
   private final HostActivity activity;
 
   private String streamName;
@@ -120,7 +123,7 @@ import java.util.List;
     return false;
   }
 
-  public DashTestRunner(String tag, HostActivity activity) {
+  public DashTestRunner(@Size(max = 23) String tag, HostActivity activity) {
     this.tag = tag;
     this.activity = activity;
   }
@@ -286,7 +289,7 @@ import java.util.List;
         return DrmSessionManager.DRM_UNSUPPORTED;
       }
       MediaDrmCallback drmCallback =
-          new HttpMediaDrmCallback(widevineLicenseUrl, new DefaultHttpDataSourceFactory());
+          new HttpMediaDrmCallback(widevineLicenseUrl, new DefaultHttpDataSource.Factory());
       DefaultDrmSessionManager drmSessionManager =
           new DefaultDrmSessionManager.Builder()
               .setUuidAndExoMediaDrmProvider(
@@ -311,10 +314,10 @@ import java.util.List;
     }
 
     @Override
-    protected SimpleExoPlayer buildExoPlayer(
+    protected ExoPlayer buildExoPlayer(
         HostActivity host, Surface surface, MappingTrackSelector trackSelector) {
-      SimpleExoPlayer player =
-          new SimpleExoPlayer.Builder(host, new DebugRenderersFactory(host))
+      ExoPlayer player =
+          new ExoPlayer.Builder(host, new DebugRenderersFactory(host))
               .setTrackSelector(trackSelector)
               .build();
       player.setVideoSurface(surface);
@@ -327,9 +330,9 @@ import java.util.List;
       DataSource.Factory dataSourceFactory =
           this.dataSourceFactory != null
               ? this.dataSourceFactory
-              : new DefaultDataSourceFactory(host);
+              : new DefaultDataSource.Factory(host);
       return new DashMediaSource.Factory(dataSourceFactory)
-          .setDrmSessionManager(drmSessionManager)
+          .setDrmSessionManagerProvider(unusedMediaItem -> drmSessionManager)
           .setLoadErrorHandlingPolicy(new DefaultLoadErrorHandlingPolicy(MIN_LOADABLE_RETRY_COUNT))
           .createMediaSource(MediaItem.fromUri(manifestUrl));
     }
@@ -358,18 +361,8 @@ import java.util.List;
             tag + AUDIO_TAG_SUFFIX, audioCounters, 0);
         DecoderCountersUtil.assertSkippedOutputBufferCount(
             tag + VIDEO_TAG_SUFFIX, videoCounters, 0);
-        // We allow one fewer output buffer due to the way that MediaCodecRenderer and the
-        // underlying decoders handle the end of stream. This should be tightened up in the future.
-        DecoderCountersUtil.assertTotalBufferCount(
-            tag + AUDIO_TAG_SUFFIX,
-            audioCounters,
-            audioCounters.inputBufferCount - 1,
-            audioCounters.inputBufferCount);
-        DecoderCountersUtil.assertTotalBufferCount(
-            tag + VIDEO_TAG_SUFFIX,
-            videoCounters,
-            videoCounters.inputBufferCount - 1,
-            videoCounters.inputBufferCount);
+        DecoderCountersUtil.assertTotalBufferCount(tag + AUDIO_TAG_SUFFIX, audioCounters);
+        DecoderCountersUtil.assertTotalBufferCount(tag + VIDEO_TAG_SUFFIX, videoCounters);
       }
       try {
         if (!shouldSkipDroppedOutputBufferPerformanceAssertions()) {
@@ -405,7 +398,9 @@ import java.util.List;
 
   private static final class DashTestTrackSelector extends DefaultTrackSelector {
 
+    @Size(max = 23)
     private final String tag;
+
     private final String audioFormatId;
     private final String[] videoFormatIds;
     private final boolean canIncludeAdditionalVideoFormats;

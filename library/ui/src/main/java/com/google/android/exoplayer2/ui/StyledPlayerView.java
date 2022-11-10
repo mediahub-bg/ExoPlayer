@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.ui;
 import static com.google.android.exoplayer2.Player.COMMAND_GET_TEXT;
 import static com.google.android.exoplayer2.Player.COMMAND_SET_VIDEO_SURFACE;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
+import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -47,24 +48,17 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ControlDispatcher;
-import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.ForwardingPlayer;
 import com.google.android.exoplayer2.MediaMetadata;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.Player.DiscontinuityReason;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.Timeline.Period;
-import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.TracksInfo;
 import com.google.android.exoplayer2.text.Cue;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout.ResizeMode;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.ErrorMessageProvider;
-import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.RepeatModeUtil;
 import com.google.android.exoplayer2.util.Util;
 import com.google.android.exoplayer2.video.VideoSize;
@@ -72,6 +66,7 @@ import com.google.common.collect.ImmutableList;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.List;
 import org.checkerframework.checker.nullness.qual.EnsuresNonNullIf;
@@ -82,8 +77,7 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * during playback, and displays playback controls using a {@link StyledPlayerControlView}.
  *
  * <p>A StyledPlayerView can be customized by setting attributes (or calling corresponding methods),
- * overriding drawables, overriding the view's layout file, or by specifying a custom view layout
- * file.
+ * or overriding drawables.
  *
  * <h2>Attributes</h2>
  *
@@ -159,22 +153,10 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  *         <li>Corresponding method: {@link #setKeepContentOnPlayerReset(boolean)}
  *         <li>Default: {@code false}
  *       </ul>
- *   <li><b>{@code player_layout_id}</b> - Specifies the id of the layout to be inflated. See below
- *       for more details.
- *       <ul>
- *         <li>Corresponding method: None
- *         <li>Default: {@code R.layout.exo_styled_player_view}
- *       </ul>
- *   <li><b>{@code controller_layout_id}</b> - Specifies the id of the layout resource to be
- *       inflated by the child {@link StyledPlayerControlView}. See below for more details.
- *       <ul>
- *         <li>Corresponding method: None
- *         <li>Default: {@code R.layout.exo_styled_player_control_view}
- *       </ul>
  *   <li>All attributes that can be set on {@link StyledPlayerControlView} and {@link
  *       DefaultTimeBar} can also be set on a StyledPlayerView, and will be propagated to the
  *       inflated {@link StyledPlayerControlView} unless the layout is overridden to specify a
- *       custom {@code exo_controller} (see below).
+ *       custom {@code exo_controller}.
  * </ul>
  *
  * <h2>Overriding drawables</h2>
@@ -182,81 +164,6 @@ import org.checkerframework.checker.nullness.qual.RequiresNonNull;
  * The drawables used by {@link StyledPlayerControlView} (with its default layout file) can be
  * overridden by drawables with the same names defined in your application. See the {@link
  * StyledPlayerControlView} documentation for a list of drawables that can be overridden.
- *
- * <h2>Overriding the layout file</h2>
- *
- * To customize the layout of StyledPlayerView throughout your app, or just for certain
- * configurations, you can define {@code exo_styled_player_view.xml} layout files in your
- * application {@code res/layout*} directories. These layouts will override the one provided by the
- * ExoPlayer library, and will be inflated for use by StyledPlayerView. The view identifies and
- * binds its children by looking for the following ids:
- *
- * <ul>
- *   <li><b>{@code exo_content_frame}</b> - A frame whose aspect ratio is resized based on the video
- *       or album art of the media being played, and the configured {@code resize_mode}. The video
- *       surface view is inflated into this frame as its first child.
- *       <ul>
- *         <li>Type: {@link AspectRatioFrameLayout}
- *       </ul>
- *   <li><b>{@code exo_shutter}</b> - A view that's made visible when video should be hidden. This
- *       view is typically an opaque view that covers the video surface, thereby obscuring it when
- *       visible. Obscuring the surface in this way also helps to prevent flicker at the start of
- *       playback when {@code surface_type="surface_view"}.
- *       <ul>
- *         <li>Type: {@link View}
- *       </ul>
- *   <li><b>{@code exo_buffering}</b> - A view that's made visible when the player is buffering.
- *       This view typically displays a buffering spinner or animation.
- *       <ul>
- *         <li>Type: {@link View}
- *       </ul>
- *   <li><b>{@code exo_subtitles}</b> - Displays subtitles.
- *       <ul>
- *         <li>Type: {@link SubtitleView}
- *       </ul>
- *   <li><b>{@code exo_artwork}</b> - Displays album art.
- *       <ul>
- *         <li>Type: {@link ImageView}
- *       </ul>
- *   <li><b>{@code exo_error_message}</b> - Displays an error message to the user if playback fails.
- *       <ul>
- *         <li>Type: {@link TextView}
- *       </ul>
- *   <li><b>{@code exo_controller_placeholder}</b> - A placeholder that's replaced with the inflated
- *       {@link StyledPlayerControlView}. Ignored if an {@code exo_controller} view exists.
- *       <ul>
- *         <li>Type: {@link View}
- *       </ul>
- *   <li><b>{@code exo_controller}</b> - An already inflated {@link StyledPlayerControlView}. Allows
- *       use of a custom extension of {@link StyledPlayerControlView}. {@link
- *       StyledPlayerControlView} and {@link DefaultTimeBar} attributes set on the StyledPlayerView
- *       will not be automatically propagated through to this instance. If a view exists with this
- *       id, any {@code exo_controller_placeholder} view will be ignored.
- *       <ul>
- *         <li>Type: {@link StyledPlayerControlView}
- *       </ul>
- *   <li><b>{@code exo_ad_overlay}</b> - A {@link FrameLayout} positioned on top of the player which
- *       is used to show ad UI (if applicable).
- *       <ul>
- *         <li>Type: {@link FrameLayout}
- *       </ul>
- *   <li><b>{@code exo_overlay}</b> - A {@link FrameLayout} positioned on top of the player which
- *       the app can access via {@link #getOverlayFrameLayout()}, provided for convenience.
- *       <ul>
- *         <li>Type: {@link FrameLayout}
- *       </ul>
- * </ul>
- *
- * <p>All child views are optional and so can be omitted if not required, however where defined they
- * must be of the expected type.
- *
- * <h2>Specifying a custom layout file</h2>
- *
- * Defining your own {@code exo_styled_player_view.xml} is useful to customize the layout of
- * StyledPlayerView throughout your application. It's also possible to customize the layout for a
- * single instance in a layout file. This is achieved by setting the {@code player_layout_id}
- * attribute on a StyledPlayerView. This will cause the specified layout to be inflated instead of
- * {@code exo_styled_player_view.xml} for only the instance on which the attribute is set.
  */
 public class StyledPlayerView extends FrameLayout implements AdViewProvider {
 
@@ -266,6 +173,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
    */
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
   @IntDef({SHOW_BUFFERING_NEVER, SHOW_BUFFERING_WHEN_PLAYING, SHOW_BUFFERING_ALWAYS})
   public @interface ShowBuffering {}
   /** The buffering view is never shown. */
@@ -505,7 +413,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
     if (customController != null) {
       this.controller = customController;
     } else if (controllerPlaceholder != null) {
-      // Propagate attrs as playbackAttrs so that PlayerControlView's custom attributes are
+      // Propagate attrs as playbackAttrs so that StyledPlayerControlView's custom attributes are
       // transferred, but standard attributes (e.g. background) are not.
       this.controller = new StyledPlayerControlView(context, null, 0, attrs);
       controller.setId(R.id.exo_controller);
@@ -562,7 +470,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
   }
 
   /**
-   * Set the {@link Player} to use.
+   * Sets the {@link Player} to use.
    *
    * <p>To transition a {@link Player} from targeting one view to another, it's recommended to use
    * {@link #switchTargetView(Player, StyledPlayerView, StyledPlayerView)} rather than this method.
@@ -917,7 +825,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
   }
 
   /**
-   * Set the {@link StyledPlayerControlView.VisibilityListener}.
+   * Sets the {@link StyledPlayerControlView.VisibilityListener}.
    *
    * @param listener The listener to be notified about visibility changes, or null to remove the
    *     current listener.
@@ -947,17 +855,6 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
       @Nullable StyledPlayerControlView.OnFullScreenModeChangedListener listener) {
     Assertions.checkStateNotNull(controller);
     controller.setOnFullScreenModeChangedListener(listener);
-  }
-
-  /**
-   * @deprecated Use a {@link ForwardingPlayer} and pass it to {@link #setPlayer(Player)} instead.
-   *     You can also customize some operations when configuring the player (for example by using
-   *     {@link SimpleExoPlayer.Builder#setSeekBackIncrementMs(long)}).
-   */
-  @Deprecated
-  public void setControlDispatcher(ControlDispatcher controlDispatcher) {
-    Assertions.checkStateNotNull(controller);
-    controller.setControlDispatcher(controlDispatcher);
   }
 
   /**
@@ -1067,7 +964,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
   }
 
   /**
-   * Set the {@link AspectRatioFrameLayout.AspectRatioListener}.
+   * Sets the {@link AspectRatioFrameLayout.AspectRatioListener}.
    *
    * @param listener The listener to be notified about aspect ratios changes of the video content or
    *     the content frame.
@@ -1297,7 +1194,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
 
   private void updateForCurrentTrackSelections(boolean isNewPlayer) {
     @Nullable Player player = this.player;
-    if (player == null || player.getCurrentTrackGroups().isEmpty()) {
+    if (player == null || player.getCurrentTracksInfo().getTrackGroupInfos().isEmpty()) {
       if (!keepContentOnPlayerReset) {
         hideArtwork();
         closeShutter();
@@ -1310,20 +1207,11 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
       closeShutter();
     }
 
-    TrackSelectionArray trackSelections = player.getCurrentTrackSelections();
-    for (int i = 0; i < trackSelections.length; i++) {
-      @Nullable TrackSelection trackSelection = trackSelections.get(i);
-      if (trackSelection != null) {
-        for (int j = 0; j < trackSelection.length(); j++) {
-          Format format = trackSelection.getFormat(j);
-          if (MimeTypes.getTrackType(format.sampleMimeType) == C.TRACK_TYPE_VIDEO) {
-            // Video enabled, so artwork must be hidden. If the shutter is closed, it will be opened
-            // in onRenderedFirstFrame().
-            hideArtwork();
-            return;
-          }
-        }
-      }
+    if (player.getCurrentTracksInfo().isTypeSelected(C.TRACK_TYPE_VIDEO)) {
+      // Video enabled, so artwork must be hidden. If the shutter is closed, it will be opened
+      // in onRenderedFirstFrame().
+      hideArtwork();
+      return;
     }
 
     // Video disabled so the shutter must be closed.
@@ -1534,7 +1422,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
     @Override
     public void onCues(List<Cue> cues) {
       if (subtitleView != null) {
-        subtitleView.onCues(cues);
+        subtitleView.setCues(cues);
       }
     }
 
@@ -1551,7 +1439,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
     }
 
     @Override
-    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray selections) {
+    public void onTracksInfoChanged(TracksInfo tracksInfo) {
       // Suppress the update if transitioning to an unprepared period within the same window. This
       // is necessary to avoid closing the shutter when such a transition occurs. See:
       // https://github.com/google/ExoPlayer/issues/5507.
@@ -1559,7 +1447,7 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
       Timeline timeline = player.getCurrentTimeline();
       if (timeline.isEmpty()) {
         lastPeriodUidWithTracks = null;
-      } else if (!player.getCurrentTrackGroups().isEmpty()) {
+      } else if (!player.getCurrentTracksInfo().getTrackGroupInfos().isEmpty()) {
         lastPeriodUidWithTracks =
             timeline.getPeriod(player.getCurrentPeriodIndex(), period, /* setIds= */ true).uid;
       } else if (lastPeriodUidWithTracks != null) {
@@ -1567,8 +1455,8 @@ public class StyledPlayerView extends FrameLayout implements AdViewProvider {
         if (lastPeriodIndexWithTracks != C.INDEX_UNSET) {
           int lastWindowIndexWithTracks =
               timeline.getPeriod(lastPeriodIndexWithTracks, period).windowIndex;
-          if (player.getCurrentWindowIndex() == lastWindowIndexWithTracks) {
-            // We're in the same window. Suppress the update.
+          if (player.getCurrentMediaItemIndex() == lastWindowIndexWithTracks) {
+            // We're in the same media item. Suppress the update.
             return;
           }
         }

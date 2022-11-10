@@ -12,7 +12,7 @@ events is easy:
 // Add a listener to receive events from the player.
 player.addListener(listener);
 ~~~
-{: .language-java}
+{: .language-java }
 
 `Player.Listener` has empty default methods, so you only need to implement
 the methods you're interested in. See the [Javadoc][] for a full description of
@@ -31,7 +31,8 @@ Changes in player state can be received by implementing
 `Player.Listener`. The player can be in one of four playback states:
 
 * `Player.STATE_IDLE`: This is the initial state, the state when the player is
-  stopped, and when playback failed.
+  stopped, and when playback failed. The player will hold only limited resources
+  in this state.
 * `Player.STATE_BUFFERING`: The player is not able to immediately play from its
   current position. This mostly happens because more data needs to be loaded.
 * `Player.STATE_READY`: The player is able to immediately play from its current
@@ -70,7 +71,7 @@ Errors that cause playback to fail can be received by implementing
 `onPlayerError(PlaybackException error)` in a registered
 `Player.Listener`. When a failure occurs, this method will be called
 immediately before the playback state transitions to `Player.STATE_IDLE`.
-Failed or stopped playbacks can be retried by calling `ExoPlayer.retry`.
+Failed or stopped playbacks can be retried by calling `ExoPlayer.prepare`.
 
 Note that some [`Player`][] implementations pass instances of subclasses of
 `PlaybackException` to provide additional information about the failure. For
@@ -180,21 +181,21 @@ together in `onEvents`.
 
 ## Using AnalyticsListener ##
 
-When using `SimpleExoPlayer`, an `AnalyticsListener` can be registered with the
-player by calling `addAnalyticsListener`. `AnalyticsListener` implementations
-are able to listen to detailed events that may be useful for analytics and
-logging purposes. Please refer to the [analytics page][] for more details.
+When using `ExoPlayer`, an `AnalyticsListener` can be registered with the player
+by calling `addAnalyticsListener`. `AnalyticsListener` implementations are able
+to listen to detailed events that may be useful for analytics and logging
+purposes. Please refer to the [analytics page][] for more details.
 
 ### Using EventLogger ###
 
 `EventLogger` is an `AnalyticsListener` provided directly by the library for
-logging purposes. It can be added to a `SimpleExoPlayer` to enable useful
+logging purposes. It can be added to an `ExoPlayer` to enable useful
 additional logging with a single line.
 
 ```
 player.addAnalyticsListener(new EventLogger(trackSelector));
 ```
-{: .language-java}
+{: .language-java }
 
 Passing the `trackSelector` enables additional logging, but is optional and so
 `null` can be passed instead. See the [debug logging page][] for more details.
@@ -219,7 +220,7 @@ player
           // Do something at the specified playback position.
         })
     .setLooper(Looper.getMainLooper())
-    .setPosition(/* windowIndex= */ 0, /* positionMs= */ 120_000)
+    .setPosition(/* mediaItemIndex= */ 0, /* positionMs= */ 120_000)
     .setPayload(customPayloadData)
     .setDeleteAfterDelivery(false)
     .send();

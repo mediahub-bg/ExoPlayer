@@ -32,6 +32,7 @@ import com.google.android.exoplayer2.Renderer;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.RenderersFactory;
 import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.audio.AudioRendererEventListener;
 import com.google.android.exoplayer2.drm.DrmSessionManager;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
@@ -321,7 +322,7 @@ public final class DownloadHelper {
    * @throws IllegalStateException If the media item is of type DASH, HLS or SmoothStreaming.
    */
   public static DownloadHelper forMediaItem(Context context, MediaItem mediaItem) {
-    Assertions.checkArgument(isProgressive(checkNotNull(mediaItem.playbackProperties)));
+    Assertions.checkArgument(isProgressive(checkNotNull(mediaItem.localConfiguration)));
     return forMediaItem(
         mediaItem,
         getDefaultTrackSelectorParameters(context),
@@ -411,7 +412,7 @@ public final class DownloadHelper {
       @Nullable RenderersFactory renderersFactory,
       @Nullable DataSource.Factory dataSourceFactory,
       @Nullable DrmSessionManager drmSessionManager) {
-    boolean isProgressive = isProgressive(checkNotNull(mediaItem.playbackProperties));
+    boolean isProgressive = isProgressive(checkNotNull(mediaItem.localConfiguration));
     Assertions.checkArgument(isProgressive || dataSourceFactory != null);
     return new DownloadHelper(
         mediaItem,
@@ -452,7 +453,7 @@ public final class DownloadHelper {
         downloadRequest.toMediaItem(), dataSourceFactory, drmSessionManager);
   }
 
-  private final MediaItem.PlaybackProperties playbackProperties;
+  private final MediaItem.LocalConfiguration localConfiguration;
   @Nullable private final MediaSource mediaSource;
   private final DefaultTrackSelector trackSelector;
   private final RendererCapabilities[] rendererCapabilities;
@@ -485,7 +486,7 @@ public final class DownloadHelper {
       @Nullable MediaSource mediaSource,
       DefaultTrackSelector.Parameters trackSelectorParameters,
       RendererCapabilities[] rendererCapabilities) {
-    this.playbackProperties = checkNotNull(mediaItem.playbackProperties);
+    this.localConfiguration = checkNotNull(mediaItem.localConfiguration);
     this.mediaSource = mediaSource;
     this.trackSelector =
         new DefaultTrackSelector(trackSelectorParameters, new DownloadTrackSelection.Factory());
@@ -726,7 +727,7 @@ public final class DownloadHelper {
    * @return The built {@link DownloadRequest}.
    */
   public DownloadRequest getDownloadRequest(@Nullable byte[] data) {
-    return getDownloadRequest(playbackProperties.uri.toString(), data);
+    return getDownloadRequest(localConfiguration.uri.toString(), data);
   }
 
   /**
@@ -739,13 +740,13 @@ public final class DownloadHelper {
    */
   public DownloadRequest getDownloadRequest(String id, @Nullable byte[] data) {
     DownloadRequest.Builder requestBuilder =
-        new DownloadRequest.Builder(id, playbackProperties.uri)
-            .setMimeType(playbackProperties.mimeType)
+        new DownloadRequest.Builder(id, localConfiguration.uri)
+            .setMimeType(localConfiguration.mimeType)
             .setKeySetId(
-                playbackProperties.drmConfiguration != null
-                    ? playbackProperties.drmConfiguration.getKeySetId()
+                localConfiguration.drmConfiguration != null
+                    ? localConfiguration.drmConfiguration.getKeySetId()
                     : null)
-            .setCustomCacheKey(playbackProperties.customCacheKey)
+            .setCustomCacheKey(localConfiguration.customCacheKey)
             .setData(data);
     if (mediaSource == null) {
       return requestBuilder.build();
@@ -831,8 +832,6 @@ public final class DownloadHelper {
    * Runs the track selection for a given period index with the current parameters. The selected
    * tracks will be added to {@link #trackSelectionsByPeriodAndRenderer}.
    */
-  // Intentional reference comparison of track group instances.
-  @SuppressWarnings("ReferenceEquality")
   @RequiresNonNull({
     "trackGroupArrays",
     "trackSelectionsByPeriodAndRenderer",
@@ -857,7 +856,7 @@ public final class DownloadHelper {
         boolean mergedWithExistingSelection = false;
         for (int j = 0; j < existingSelectionList.size(); j++) {
           ExoTrackSelection existingSelection = existingSelectionList.get(j);
-          if (existingSelection.getTrackGroup() == newSelection.getTrackGroup()) {
+          if (existingSelection.getTrackGroup().equals(newSelection.getTrackGroup())) {
             // Merge with existing selection.
             scratchSet.clear();
             for (int k = 0; k < existingSelection.length(); k++) {
@@ -892,13 +891,14 @@ public final class DownloadHelper {
       DataSource.Factory dataSourceFactory,
       @Nullable DrmSessionManager drmSessionManager) {
     return new DefaultMediaSourceFactory(dataSourceFactory, ExtractorsFactory.EMPTY)
-        .setDrmSessionManager(drmSessionManager)
+        .setDrmSessionManagerProvider(
+            drmSessionManager != null ? unusedMediaItem -> drmSessionManager : null)
         .createMediaSource(mediaItem);
   }
 
-  private static boolean isProgressive(MediaItem.PlaybackProperties playbackProperties) {
+  private static boolean isProgressive(MediaItem.LocalConfiguration localConfiguration) {
     return Util.inferContentTypeForUriAndMimeType(
-            playbackProperties.uri, playbackProperties.mimeType)
+            localConfiguration.uri, localConfiguration.mimeType)
         == C.TYPE_OTHER;
   }
 
@@ -955,7 +955,8 @@ public final class DownloadHelper {
     public boolean handleMessage(Message msg) {
       switch (msg.what) {
         case MESSAGE_PREPARE_SOURCE:
-          mediaSource.prepareSource(/* caller= */ this, /* mediaTransferListener= */ null);
+          mediaSource.prepareSource(
+              /* caller= */ this, /* mediaTransferListener= */ null, PlayerId.UNSET);
           mediaSourceHandler.sendEmptyMessage(MESSAGE_CHECK_FOR_FAILURE);
           return true;
         case MESSAGE_CHECK_FOR_FAILURE:
@@ -1096,7 +1097,7 @@ public final class DownloadHelper {
     }
 
     @Override
-    public int getSelectionReason() {
+    public @C.SelectionReason int getSelectionReason() {
       return C.SELECTION_REASON_UNKNOWN;
     }
 

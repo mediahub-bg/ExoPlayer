@@ -15,6 +15,12 @@
  */
 package com.google.android.exoplayer2.drm;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE_USE;
+
 import android.media.DeniedByServerException;
 import android.media.MediaDrm;
 import android.media.MediaDrmResetException;
@@ -23,19 +29,22 @@ import androidx.annotation.DoNotInline;
 import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.util.Util;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /** DRM-related utility methods. */
 public final class DrmUtil {
 
   /** Identifies the operation which caused a DRM-related error. */
+  // @Target list includes both 'default' targets and TYPE_USE, to ensure backwards compatibility
+  // with Kotlin usages from before TYPE_USE was added.
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target({FIELD, METHOD, PARAMETER, LOCAL_VARIABLE, TYPE_USE})
   @IntDef(
       value = {
         ERROR_SOURCE_EXO_MEDIA_DRM,
@@ -61,19 +70,15 @@ public final class DrmUtil {
    * @return The {@link PlaybackException.ErrorCode} that corresponds to the given DRM-related
    *     exception.
    */
-  @PlaybackException.ErrorCode
-  public static int getErrorCodeForMediaDrmException(
+  public static @PlaybackException.ErrorCode int getErrorCodeForMediaDrmException(
       Exception exception, @ErrorSource int errorSource) {
-    if (Util.SDK_INT >= 21 && PlatformOperationsWrapperV21.isMediaDrmStateException(exception)) {
-      return PlatformOperationsWrapperV21.mediaDrmStateExceptionToErrorCode(exception);
-    } else if (Util.SDK_INT >= 23
-        && PlatformOperationsWrapperV23.isMediaDrmResetException(exception)) {
+    if (Util.SDK_INT >= 21 && Api21.isMediaDrmStateException(exception)) {
+      return Api21.mediaDrmStateExceptionToErrorCode(exception);
+    } else if (Util.SDK_INT >= 23 && Api23.isMediaDrmResetException(exception)) {
       return PlaybackException.ERROR_CODE_DRM_SYSTEM_ERROR;
-    } else if (Util.SDK_INT >= 18
-        && PlatformOperationsWrapperV18.isNotProvisionedException(exception)) {
+    } else if (Util.SDK_INT >= 18 && Api18.isNotProvisionedException(exception)) {
       return PlaybackException.ERROR_CODE_DRM_PROVISIONING_FAILED;
-    } else if (Util.SDK_INT >= 18
-        && PlatformOperationsWrapperV18.isDeniedByServerException(exception)) {
+    } else if (Util.SDK_INT >= 18 && Api18.isDeniedByServerException(exception)) {
       return PlaybackException.ERROR_CODE_DRM_DEVICE_REVOKED;
     } else if (exception instanceof UnsupportedDrmException) {
       return PlaybackException.ERROR_CODE_DRM_SCHEME_UNSUPPORTED;
@@ -98,7 +103,7 @@ public final class DrmUtil {
   // Internal classes.
 
   @RequiresApi(18)
-  private static final class PlatformOperationsWrapperV18 {
+  private static final class Api18 {
 
     @DoNotInline
     public static boolean isNotProvisionedException(@Nullable Throwable throwable) {
@@ -112,7 +117,7 @@ public final class DrmUtil {
   }
 
   @RequiresApi(21)
-  private static final class PlatformOperationsWrapperV21 {
+  private static final class Api21 {
 
     @DoNotInline
     public static boolean isMediaDrmStateException(@Nullable Throwable throwable) {
@@ -120,17 +125,17 @@ public final class DrmUtil {
     }
 
     @DoNotInline
-    @PlaybackException.ErrorCode
-    public static int mediaDrmStateExceptionToErrorCode(Throwable throwable) {
+    public static @PlaybackException.ErrorCode int mediaDrmStateExceptionToErrorCode(
+        Throwable throwable) {
       @Nullable
       String diagnosticsInfo = ((MediaDrm.MediaDrmStateException) throwable).getDiagnosticInfo();
       int drmErrorCode = Util.getErrorCodeFromPlatformDiagnosticsInfo(diagnosticsInfo);
-      return C.getErrorCodeForMediaDrmErrorCode(drmErrorCode);
+      return Util.getErrorCodeForMediaDrmErrorCode(drmErrorCode);
     }
   }
 
   @RequiresApi(23)
-  private static final class PlatformOperationsWrapperV23 {
+  private static final class Api23 {
 
     @DoNotInline
     public static boolean isMediaDrmResetException(@Nullable Throwable throwable) {

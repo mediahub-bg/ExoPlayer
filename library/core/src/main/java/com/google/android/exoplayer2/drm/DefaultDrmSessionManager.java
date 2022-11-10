@@ -18,6 +18,8 @@ package com.google.android.exoplayer2.drm;
 import static com.google.android.exoplayer2.util.Assertions.checkArgument;
 import static com.google.android.exoplayer2.util.Assertions.checkNotNull;
 import static com.google.android.exoplayer2.util.Assertions.checkState;
+import static com.google.android.exoplayer2.util.Assertions.checkStateNotNull;
+import static java.lang.annotation.ElementType.TYPE_USE;
 
 import android.annotation.SuppressLint;
 import android.media.ResourceBusyException;
@@ -31,6 +33,7 @@ import androidx.annotation.RequiresApi;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.analytics.PlayerId;
 import com.google.android.exoplayer2.drm.DrmInitData.SchemeData;
 import com.google.android.exoplayer2.drm.DrmSession.DrmSessionException;
 import com.google.android.exoplayer2.drm.ExoMediaDrm.OnEventListener;
@@ -45,6 +48,7 @@ import com.google.common.collect.Sets;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +63,7 @@ import org.checkerframework.checker.nullness.qual.MonotonicNonNull;
  * A {@link DrmSessionManager} that supports playbacks using {@link ExoMediaDrm}.
  *
  * <p>This implementation supports pre-acquisition of sessions using {@link
- * #preacquireSession(Looper, DrmSessionEventListener.EventDispatcher, Format)}.
+ * #preacquireSession(DrmSessionEventListener.EventDispatcher, Format)}.
  */
 @RequiresApi(18)
 public class DefaultDrmSessionManager implements DrmSessionManager {
@@ -75,7 +79,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
     private UUID uuid;
     private ExoMediaDrm.Provider exoMediaDrmProvider;
     private boolean multiSession;
-    private int[] useDrmSessionsForClearContentTrackTypes;
+    private @C.TrackType int[] useDrmSessionsForClearContentTrackTypes;
     private boolean playClearSamplesWithoutKeys;
     private LoadErrorHandlingPolicy loadErrorHandlingPolicy;
     private long sessionKeepaliveMs;
@@ -166,8 +170,8 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
      *     track types other than {@link C#TRACK_TYPE_AUDIO} and {@link C#TRACK_TYPE_VIDEO}.
      */
     public Builder setUseDrmSessionsForClearContent(
-        int... useDrmSessionsForClearContentTrackTypes) {
-      for (int trackType : useDrmSessionsForClearContentTrackTypes) {
+        @C.TrackType int... useDrmSessionsForClearContentTrackTypes) {
+      for (@C.TrackType int trackType : useDrmSessionsForClearContentTrackTypes) {
         checkArgument(trackType == C.TRACK_TYPE_VIDEO || trackType == C.TRACK_TYPE_AUDIO);
       }
       this.useDrmSessionsForClearContentTrackTypes =
@@ -258,6 +262,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
    */
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
   @IntDef({MODE_PLAYBACK, MODE_QUERY, MODE_DOWNLOAD, MODE_RELEASE})
   public @interface Mode {}
   /**
@@ -283,7 +288,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   private final MediaDrmCallback callback;
   private final HashMap<String, String> keyRequestParameters;
   private final boolean multiSession;
-  private final int[] useDrmSessionsForClearContentTrackTypes;
+  private final @C.TrackType int[] useDrmSessionsForClearContentTrackTypes;
   private final boolean playClearSamplesWithoutKeys;
   private final ProvisioningManagerImpl provisioningManagerImpl;
   private final LoadErrorHandlingPolicy loadErrorHandlingPolicy;
@@ -302,8 +307,9 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   private @MonotonicNonNull Handler playbackHandler;
   private int mode;
   @Nullable private byte[] offlineLicenseKeySetId;
+  private @MonotonicNonNull PlayerId playerId;
 
-  /* package */ volatile @Nullable MediaDrmHandler mediaDrmHandler;
+  /* package */ @Nullable volatile MediaDrmHandler mediaDrmHandler;
 
   /**
    * @param uuid The UUID of the drm scheme.
@@ -394,7 +400,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
       MediaDrmCallback callback,
       HashMap<String, String> keyRequestParameters,
       boolean multiSession,
-      int[] useDrmSessionsForClearContentTrackTypes,
+      @C.TrackType int[] useDrmSessionsForClearContentTrackTypes,
       boolean playClearSamplesWithoutKeys,
       LoadErrorHandlingPolicy loadErrorHandlingPolicy,
       long sessionKeepaliveMs) {
@@ -419,8 +425,8 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
 
   /**
    * Sets the mode, which determines the role of sessions acquired from the instance. This must be
-   * called before {@link #acquireSession(Looper, DrmSessionEventListener.EventDispatcher, Format)}
-   * is called.
+   * called before {@link #acquireSession(DrmSessionEventListener.EventDispatcher, Format)} is
+   * called.
    *
    * <p>By default, the mode is {@link #MODE_PLAYBACK} and a streaming license is requested when
    * required.
@@ -488,12 +494,16 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   }
 
   @Override
-  public DrmSessionReference preacquireSession(
-      Looper playbackLooper,
-      @Nullable DrmSessionEventListener.EventDispatcher eventDispatcher,
-      Format format) {
-    checkState(prepareCallsCount > 0);
+  public void setPlayer(Looper playbackLooper, PlayerId playerId) {
     initPlaybackLooper(playbackLooper);
+    this.playerId = playerId;
+  }
+
+  @Override
+  public DrmSessionReference preacquireSession(
+      @Nullable DrmSessionEventListener.EventDispatcher eventDispatcher, Format format) {
+    checkState(prepareCallsCount > 0);
+    checkStateNotNull(playbackLooper);
     PreacquiredSessionReference preacquiredSessionReference =
         new PreacquiredSessionReference(eventDispatcher);
     preacquiredSessionReference.acquire(format);
@@ -503,11 +513,9 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   @Override
   @Nullable
   public DrmSession acquireSession(
-      Looper playbackLooper,
-      @Nullable DrmSessionEventListener.EventDispatcher eventDispatcher,
-      Format format) {
+      @Nullable DrmSessionEventListener.EventDispatcher eventDispatcher, Format format) {
     checkState(prepareCallsCount > 0);
-    initPlaybackLooper(playbackLooper);
+    checkStateNotNull(playbackLooper);
     return acquireSession(
         playbackLooper,
         eventDispatcher,
@@ -579,19 +587,15 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
   }
 
   @Override
-  @Nullable
-  public Class<? extends ExoMediaCrypto> getExoMediaCryptoType(Format format) {
-    Class<? extends ExoMediaCrypto> exoMediaCryptoType =
-        checkNotNull(exoMediaDrm).getExoMediaCryptoType();
+  public @C.CryptoType int getCryptoType(Format format) {
+    @C.CryptoType int cryptoType = checkNotNull(exoMediaDrm).getCryptoType();
     if (format.drmInitData == null) {
       int trackType = MimeTypes.getTrackType(format.sampleMimeType);
       return Util.linearSearch(useDrmSessionsForClearContentTrackTypes, trackType) != C.INDEX_UNSET
-          ? exoMediaCryptoType
-          : null;
+          ? cryptoType
+          : C.CRYPTO_TYPE_NONE;
     } else {
-      return canAcquireSession(format.drmInitData)
-          ? exoMediaCryptoType
-          : UnsupportedMediaCrypto.class;
+      return canAcquireSession(format.drmInitData) ? cryptoType : C.CRYPTO_TYPE_UNSUPPORTED;
     }
   }
 
@@ -602,12 +606,12 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
       int trackType, boolean shouldReleasePreacquiredSessionsBeforeRetrying) {
     ExoMediaDrm exoMediaDrm = checkNotNull(this.exoMediaDrm);
     boolean avoidPlaceholderDrmSessions =
-        FrameworkMediaCrypto.class.equals(exoMediaDrm.getExoMediaCryptoType())
-            && FrameworkMediaCrypto.WORKAROUND_DEVICE_NEEDS_KEYS_TO_CONFIGURE_CODEC;
+        exoMediaDrm.getCryptoType() == C.CRYPTO_TYPE_FRAMEWORK
+            && FrameworkCryptoConfig.WORKAROUND_DEVICE_NEEDS_KEYS_TO_CONFIGURE_CODEC;
     // Avoid attaching a session to sparse formats.
     if (avoidPlaceholderDrmSessions
         || Util.linearSearch(useDrmSessionsForClearContentTrackTypes, trackType) == C.INDEX_UNSET
-        || UnsupportedMediaCrypto.class.equals(exoMediaDrm.getExoMediaCryptoType())) {
+        || exoMediaDrm.getCryptoType() == C.CRYPTO_TYPE_UNSUPPORTED) {
       return null;
     }
     if (placeholderDrmSession == null) {
@@ -777,7 +781,8 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
             keyRequestParameters,
             callback,
             checkNotNull(playbackLooper),
-            loadErrorHandlingPolicy);
+            loadErrorHandlingPolicy,
+            checkNotNull(playerId));
     // Acquire the session once on behalf of the caller to DrmSessionManager - this is the
     // reference 'assigned' to the caller which they're responsible for releasing. Do this first,
     // to ensure that eventDispatcher receives all events related to the initial
@@ -980,7 +985,7 @@ public class DefaultDrmSessionManager implements DrmSessionManager {
      * Constructs an instance.
      *
      * @param eventDispatcher The {@link DrmSessionEventListener.EventDispatcher} passed to {@link
-     *     #acquireSession(Looper, DrmSessionEventListener.EventDispatcher, Format)}.
+     *     #acquireSession(DrmSessionEventListener.EventDispatcher, Format)}.
      */
     public PreacquiredSessionReference(
         @Nullable DrmSessionEventListener.EventDispatcher eventDispatcher) {

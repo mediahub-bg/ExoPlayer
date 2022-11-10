@@ -22,11 +22,9 @@ import org.junit.runner.RunWith;
 import org.robolectric.ParameterizedRobolectricTestRunner;
 import org.robolectric.ParameterizedRobolectricTestRunner.Parameter;
 import org.robolectric.ParameterizedRobolectricTestRunner.Parameters;
-import org.robolectric.annotation.internal.DoNotInstrument;
 
 /** Tests for {@link MatroskaExtractor}. */
 @RunWith(ParameterizedRobolectricTestRunner.class)
-@DoNotInstrument
 public final class MatroskaExtractorTest {
 
   @Parameters(name = "{0}")
@@ -66,6 +64,20 @@ public final class MatroskaExtractorTest {
     ExtractorAsserts.assertBehavior(
         MatroskaExtractor::new,
         "media/mkv/sample_with_null_terminated_ssa_subtitles.mkv",
+        simulationConfig);
+  }
+
+  @Test
+  public void mkvSample_withVttSubtitles() throws Exception {
+    ExtractorAsserts.assertBehavior(
+        MatroskaExtractor::new, "media/mkv/sample_with_vtt_subtitles.mkv", simulationConfig);
+  }
+
+  @Test
+  public void mkvSample_withNullTerminatedVttSubtitles() throws Exception {
+    ExtractorAsserts.assertBehavior(
+        MatroskaExtractor::new,
+        "media/mkv/sample_with_null_terminated_vtt_subtitles.mkv",
         simulationConfig);
   }
 

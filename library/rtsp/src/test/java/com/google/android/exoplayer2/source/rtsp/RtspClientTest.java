@@ -27,8 +27,12 @@ import com.google.android.exoplayer2.source.rtsp.RtspClient.SessionInfoListener;
 import com.google.android.exoplayer2.source.rtsp.RtspMediaSource.RtspPlaybackException;
 import com.google.android.exoplayer2.util.Util;
 import com.google.common.collect.ImmutableList;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.net.SocketFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +82,80 @@ public final class RtspClientTest {
   }
 
   @Test
+  public void connectServerAndClient_usesCustomSocketFactory() throws Exception {
+    class ResponseProvider implements RtspServer.ResponseProvider {
+      @Override
+      public RtspResponse getOptionsResponse() {
+        return new RtspResponse(
+            /* status= */ 200,
+            new RtspHeaders.Builder().add(RtspHeaders.PUBLIC, "OPTIONS, DESCRIBE").build());
+      }
+
+      @Override
+      public RtspResponse getDescribeResponse(Uri requestedUri, RtspHeaders headers) {
+        return RtspTestUtils.newDescribeResponseWithSdpMessage(
+            SESSION_DESCRIPTION, rtpPacketStreamDumps, requestedUri);
+      }
+    }
+    rtspServer = new RtspServer(new ResponseProvider());
+
+    AtomicBoolean didCallCreateSocket = new AtomicBoolean();
+    SocketFactory socketFactory =
+        new SocketFactory() {
+
+          @Override
+          public Socket createSocket(String host, int port) throws IOException {
+            didCallCreateSocket.set(true);
+            return SocketFactory.getDefault().createSocket(host, port);
+          }
+
+          @Override
+          public Socket createSocket(String s, int i, InetAddress inetAddress, int i1)
+              throws IOException {
+            didCallCreateSocket.set(true);
+            return SocketFactory.getDefault().createSocket(s, i, inetAddress, i1);
+          }
+
+          @Override
+          public Socket createSocket(InetAddress inetAddress, int i) throws IOException {
+            didCallCreateSocket.set(true);
+            return SocketFactory.getDefault().createSocket(inetAddress, i);
+          }
+
+          @Override
+          public Socket createSocket(
+              InetAddress inetAddress, int i, InetAddress inetAddress1, int i1) throws IOException {
+            didCallCreateSocket.set(true);
+            return SocketFactory.getDefault().createSocket(inetAddress, i, inetAddress1, i1);
+          }
+        };
+
+    AtomicReference<ImmutableList<RtspMediaTrack>> tracksInSession = new AtomicReference<>();
+    rtspClient =
+        new RtspClient(
+            new SessionInfoListener() {
+              @Override
+              public void onSessionTimelineUpdated(
+                  RtspSessionTiming timing, ImmutableList<RtspMediaTrack> tracks) {
+                tracksInSession.set(tracks);
+              }
+
+              @Override
+              public void onSessionTimelineRequestFailed(
+                  String message, @Nullable Throwable cause) {}
+            },
+            EMPTY_PLAYBACK_LISTENER,
+            /* userAgent= */ "ExoPlayer:RtspClientTest",
+            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()),
+            socketFactory,
+            /* debugLoggingEnabled= */ false);
+    rtspClient.start();
+    RobolectricUtil.runMainLooperUntil(() -> tracksInSession.get() != null);
+
+    assertThat(didCallCreateSocket.get()).isTrue();
+  }
+
+  @Test
   public void connectServerAndClient_serverSupportsDescribe_updatesSessionTimeline()
       throws Exception {
     class ResponseProvider implements RtspServer.ResponseProvider {
@@ -89,7 +167,7 @@ public final class RtspClientTest {
       }
 
       @Override
-      public RtspResponse getDescribeResponse(Uri requestedUri) {
+      public RtspResponse getDescribeResponse(Uri requestedUri, RtspHeaders headers) {
         return RtspTestUtils.newDescribeResponseWithSdpMessage(
             SESSION_DESCRIPTION, rtpPacketStreamDumps, requestedUri);
       }
@@ -112,11 +190,66 @@ public final class RtspClientTest {
             },
             EMPTY_PLAYBACK_LISTENER,
             /* userAgent= */ "ExoPlayer:RtspClientTest",
-            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()));
+            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()),
+            SocketFactory.getDefault(),
+            /* debugLoggingEnabled= */ false);
     rtspClient.start();
     RobolectricUtil.runMainLooperUntil(() -> tracksInSession.get() != null);
 
     assertThat(tracksInSession.get()).hasSize(2);
+    assertThat(rtspClient.getState()).isEqualTo(RtspClient.RTSP_STATE_UNINITIALIZED);
+  }
+
+  @Test
+  public void connectServerAndClient_describeRedirects_updatesSessionTimeline() throws Exception {
+    class ResponseProvider implements RtspServer.ResponseProvider {
+      @Override
+      public RtspResponse getOptionsResponse() {
+        return new RtspResponse(/* status= */ 200, RtspHeaders.EMPTY);
+      }
+
+      @Override
+      public RtspResponse getDescribeResponse(Uri requestedUri, RtspHeaders headers) {
+        if (!requestedUri.getPath().contains("redirect")) {
+          return new RtspResponse(
+              301,
+              new RtspHeaders.Builder()
+                  .add(
+                      RtspHeaders.LOCATION,
+                      requestedUri.buildUpon().appendEncodedPath("redirect").build().toString())
+                  .build());
+        }
+
+        return RtspTestUtils.newDescribeResponseWithSdpMessage(
+            SESSION_DESCRIPTION, rtpPacketStreamDumps, requestedUri);
+      }
+    }
+    rtspServer = new RtspServer(new ResponseProvider());
+
+    AtomicReference<ImmutableList<RtspMediaTrack>> tracksInSession = new AtomicReference<>();
+    rtspClient =
+        new RtspClient(
+            new SessionInfoListener() {
+              @Override
+              public void onSessionTimelineUpdated(
+                  RtspSessionTiming timing, ImmutableList<RtspMediaTrack> tracks) {
+                tracksInSession.set(tracks);
+              }
+
+              @Override
+              public void onSessionTimelineRequestFailed(
+                  String message, @Nullable Throwable cause) {}
+            },
+            EMPTY_PLAYBACK_LISTENER,
+            /* userAgent= */ "ExoPlayer:RtspClientTest",
+            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()),
+            SocketFactory.getDefault(),
+            /* debugLoggingEnabled= */ false);
+    rtspClient.start();
+    RobolectricUtil.runMainLooperUntil(() -> tracksInSession.get() != null);
+
+    assertThat(tracksInSession.get()).hasSize(2);
+    assertThat(rtspClient.getState()).isEqualTo(RtspClient.RTSP_STATE_UNINITIALIZED);
   }
 
   @Test
@@ -130,7 +263,7 @@ public final class RtspClientTest {
       }
 
       @Override
-      public RtspResponse getDescribeResponse(Uri requestedUri) {
+      public RtspResponse getDescribeResponse(Uri requestedUri, RtspHeaders headers) {
         return RtspTestUtils.newDescribeResponseWithSdpMessage(
             SESSION_DESCRIPTION, rtpPacketStreamDumps, requestedUri);
       }
@@ -153,11 +286,14 @@ public final class RtspClientTest {
             },
             EMPTY_PLAYBACK_LISTENER,
             /* userAgent= */ "ExoPlayer:RtspClientTest",
-            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()));
+            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()),
+            SocketFactory.getDefault(),
+            /* debugLoggingEnabled= */ false);
     rtspClient.start();
     RobolectricUtil.runMainLooperUntil(() -> tracksInSession.get() != null);
 
     assertThat(tracksInSession.get()).hasSize(2);
+    assertThat(rtspClient.getState()).isEqualTo(RtspClient.RTSP_STATE_UNINITIALIZED);
   }
 
   @Test
@@ -174,7 +310,7 @@ public final class RtspClientTest {
       }
 
       @Override
-      public RtspResponse getDescribeResponse(Uri requestedUri) {
+      public RtspResponse getDescribeResponse(Uri requestedUri, RtspHeaders headers) {
         clientHasSentDescribeRequest.set(true);
         return RtspTestUtils.RTSP_ERROR_METHOD_NOT_ALLOWED;
       }
@@ -197,12 +333,15 @@ public final class RtspClientTest {
             },
             EMPTY_PLAYBACK_LISTENER,
             /* userAgent= */ "ExoPlayer:RtspClientTest",
-            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()));
+            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()),
+            SocketFactory.getDefault(),
+            /* debugLoggingEnabled= */ false);
     rtspClient.start();
     RobolectricUtil.runMainLooperUntil(() -> failureMessage.get() != null);
 
     assertThat(failureMessage.get()).contains("DESCRIBE not supported.");
     assertThat(clientHasSentDescribeRequest.get()).isFalse();
+    assertThat(rtspClient.getState()).isEqualTo(RtspClient.RTSP_STATE_UNINITIALIZED);
   }
 
   @Test
@@ -217,7 +356,7 @@ public final class RtspClientTest {
       }
 
       @Override
-      public RtspResponse getDescribeResponse(Uri requestedUri) {
+      public RtspResponse getDescribeResponse(Uri requestedUri, RtspHeaders headers) {
         // This session description misses required the o, t and s tags.
         return RtspTestUtils.newDescribeResponseWithSdpMessage(
             /* sessionDescription= */ "v=0\r\n", rtpPacketStreamDumps, requestedUri);
@@ -241,10 +380,13 @@ public final class RtspClientTest {
             },
             EMPTY_PLAYBACK_LISTENER,
             /* userAgent= */ "ExoPlayer:RtspClientTest",
-            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()));
+            RtspTestUtils.getTestUri(rtspServer.startAndGetPortNumber()),
+            SocketFactory.getDefault(),
+            /* debugLoggingEnabled= */ false);
     rtspClient.start();
 
     RobolectricUtil.runMainLooperUntil(() -> failureCause.get() != null);
     assertThat(failureCause.get()).hasCauseThat().isInstanceOf(ParserException.class);
+    assertThat(rtspClient.getState()).isEqualTo(RtspClient.RTSP_STATE_UNINITIALIZED);
   }
 }

@@ -15,6 +15,12 @@
  */
 package com.google.android.exoplayer2.text;
 
+import static java.lang.annotation.ElementType.FIELD;
+import static java.lang.annotation.ElementType.LOCAL_VARIABLE;
+import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
+import static java.lang.annotation.ElementType.TYPE_USE;
+
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -32,6 +38,7 @@ import com.google.common.base.Objects;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import org.checkerframework.dataflow.qual.Pure;
 
 /** Contains information about a specific cue, including textual content and formatting data. */
@@ -51,8 +58,11 @@ public final class Cue implements Bundleable {
    * The type of anchor, which may be unset. One of {@link #TYPE_UNSET}, {@link #ANCHOR_TYPE_START},
    * {@link #ANCHOR_TYPE_MIDDLE} or {@link #ANCHOR_TYPE_END}.
    */
+  // @Target list includes both 'default' targets and TYPE_USE, to ensure backwards compatibility
+  // with Kotlin usages from before TYPE_USE was added.
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target({FIELD, METHOD, PARAMETER, LOCAL_VARIABLE, TYPE_USE})
   @IntDef({TYPE_UNSET, ANCHOR_TYPE_START, ANCHOR_TYPE_MIDDLE, ANCHOR_TYPE_END})
   public @interface AnchorType {}
 
@@ -78,8 +88,11 @@ public final class Cue implements Bundleable {
    * The type of line, which may be unset. One of {@link #TYPE_UNSET}, {@link #LINE_TYPE_FRACTION}
    * or {@link #LINE_TYPE_NUMBER}.
    */
+  // @Target list includes both 'default' targets and TYPE_USE, to ensure backwards compatibility
+  // with Kotlin usages from before TYPE_USE was added.
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target({FIELD, METHOD, PARAMETER, LOCAL_VARIABLE, TYPE_USE})
   @IntDef({TYPE_UNSET, LINE_TYPE_FRACTION, LINE_TYPE_NUMBER})
   public @interface LineType {}
 
@@ -94,8 +107,11 @@ public final class Cue implements Bundleable {
    * {@link #TEXT_SIZE_TYPE_FRACTIONAL}, {@link #TEXT_SIZE_TYPE_FRACTIONAL_IGNORE_PADDING} or {@link
    * #TEXT_SIZE_TYPE_ABSOLUTE}.
    */
+  // @Target list includes both 'default' targets and TYPE_USE, to ensure backwards compatibility
+  // with Kotlin usages from before TYPE_USE was added.
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target({FIELD, METHOD, PARAMETER, LOCAL_VARIABLE, TYPE_USE})
   @IntDef({
     TYPE_UNSET,
     TEXT_SIZE_TYPE_FRACTIONAL,
@@ -117,8 +133,11 @@ public final class Cue implements Bundleable {
    * The type of vertical layout for this cue, which may be unset (i.e. horizontal). One of {@link
    * #TYPE_UNSET}, {@link #VERTICAL_TYPE_RL} or {@link #VERTICAL_TYPE_LR}.
    */
+  // @Target list includes both 'default' targets and TYPE_USE, to ensure backwards compatibility
+  // with Kotlin usages from before TYPE_USE was added.
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target({FIELD, METHOD, PARAMETER, LOCAL_VARIABLE, TYPE_USE})
   @IntDef({
     TYPE_UNSET,
     VERTICAL_TYPE_RL,
@@ -363,7 +382,6 @@ public final class Cue implements Bundleable {
    * @param textSize See {@link #textSize}.
    * @deprecated Use {@link Builder}.
    */
-  @SuppressWarnings("deprecation")
   @Deprecated
   public Cue(
       CharSequence text,
@@ -564,17 +582,17 @@ public final class Cue implements Bundleable {
     @Nullable private Alignment textAlignment;
     @Nullable private Alignment multiRowAlignment;
     private float line;
-    @LineType private int lineType;
-    @AnchorType private int lineAnchor;
+    private @LineType int lineType;
+    private @AnchorType int lineAnchor;
     private float position;
-    @AnchorType private int positionAnchor;
-    @TextSizeType private int textSizeType;
+    private @AnchorType int positionAnchor;
+    private @TextSizeType int textSizeType;
     private float textSize;
     private float size;
     private float bitmapHeight;
     private boolean windowColorSet;
     @ColorInt private int windowColor;
-    @VerticalType private int verticalType;
+    private @VerticalType int verticalType;
     private float shearDegrees;
     private int displayWidth;
     private int displayHeight;
@@ -731,8 +749,7 @@ public final class Cue implements Bundleable {
      * @see Cue#lineType
      */
     @Pure
-    @LineType
-    public int getLineType() {
+    public @LineType int getLineType() {
       return lineType;
     }
 
@@ -752,8 +769,7 @@ public final class Cue implements Bundleable {
      * @see Cue#lineAnchor
      */
     @Pure
-    @AnchorType
-    public int getLineAnchor() {
+    public @AnchorType int getLineAnchor() {
       return lineAnchor;
     }
 
@@ -795,8 +811,7 @@ public final class Cue implements Bundleable {
      * @see Cue#positionAnchor
      */
     @Pure
-    @AnchorType
-    public int getPositionAnchor() {
+    public @AnchorType int getPositionAnchor() {
       return positionAnchor;
     }
 
@@ -818,8 +833,7 @@ public final class Cue implements Bundleable {
      * @see Cue#textSizeType
      */
     @Pure
-    @TextSizeType
-    public int getTextSizeType() {
+    public @TextSizeType int getTextSizeType() {
       return textSizeType;
     }
 
@@ -937,8 +951,7 @@ public final class Cue implements Bundleable {
      * @see Cue#verticalType
      */
     @Pure
-    @VerticalType
-    public int getVerticalType() {
+    public @VerticalType int getVerticalType() {
       return verticalType;
     }
 
@@ -981,6 +994,7 @@ public final class Cue implements Bundleable {
 
   @Documented
   @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
   @IntDef({
     FIELD_TEXT,
     FIELD_TEXT_ALIGNMENT,

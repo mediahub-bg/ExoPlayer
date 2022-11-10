@@ -25,8 +25,8 @@
     catch(err) {
     }
 //-->
-var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":42,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10,"i34":10};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"],32:["t6","Deprecated Methods"]};
+var data = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10,"i12":10,"i13":10,"i14":10,"i15":10,"i16":10,"i17":10,"i18":10,"i19":10,"i20":10,"i21":10,"i22":10,"i23":10,"i24":10,"i25":10,"i26":10,"i27":10,"i28":10,"i29":10,"i30":10,"i31":10,"i32":10,"i33":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -145,7 +145,7 @@ extends androidx.media2.common.SessionPlayer</pre>
  <p>Internally this implementation posts operations to and receives callbacks on the thread
  associated with <a href="../../Player.html#getApplicationLooper()"><code>Player.getApplicationLooper()</code></a>, so it is important not to block this
  thread. In particular, when awaiting the result of an asynchronous session player operation, apps
- should generally use <a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true#addListener(java.lang.Runnable,java.util.concurrent.Executor)" title="class or interface in com.google.common.util.concurrent" class="externalLink"><code>ListenableFuture.addListener(Runnable, Executor)</code></a> to be notified of
+ should generally use <a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true#addListener(java.lang.Runnable,java.util.concurrent.Executor)" title="class or interface in com.google.common.util.concurrent" class="externalLink"><code>ListenableFuture.addListener(Runnable, Executor)</code></a> to be notified of
  completion, rather than calling the blocking <a href="https://developer.android.com/reference/java/util/concurrent/Future.html#get()" title="class or interface in java.util.concurrent" class="externalLink" target="_top"><code>Future.get()</code></a> method.</div>
 </li>
 </ul>
@@ -226,14 +226,14 @@ extends androidx.media2.common.SessionPlayer</pre>
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t6" class="tableTab"><span><a href="javascript:show(32);">Deprecated Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colSecond" scope="col">Method</th>
 <th class="colLast" scope="col">Description</th>
 </tr>
 <tr id="i0" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#addPlaylistItem(int,androidx.media2.common.MediaItem)">addPlaylistItem</a></span>&#8203;(int&nbsp;index,
                androidx.media2.common.MediaItem&nbsp;item)</code></th>
 </tr>
@@ -318,96 +318,87 @@ extends androidx.media2.common.SessionPlayer</pre>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i17" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#movePlaylistItem(int,int)">movePlaylistItem</a></span>&#8203;(int&nbsp;fromIndex,
                 int&nbsp;toIndex)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i18" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#pause()">pause</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i19" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#play()">play</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i20" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#prepare()">prepare</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i21" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#removePlaylistItem(int)">removePlaylistItem</a></span>&#8203;(int&nbsp;index)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i22" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#replacePlaylistItem(int,androidx.media2.common.MediaItem)">replacePlaylistItem</a></span>&#8203;(int&nbsp;index,
                    androidx.media2.common.MediaItem&nbsp;item)</code></th>
 </tr>
 <tr id="i23" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#seekTo(long)">seekTo</a></span>&#8203;(long&nbsp;position)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i24" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setAudioAttributes(androidx.media.AudioAttributesCompat)">setAudioAttributes</a></span>&#8203;(androidx.media.AudioAttributesCompat&nbsp;attr)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
 <tr id="i25" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setControlDispatcher(com.google.android.exoplayer2.ControlDispatcher)">setControlDispatcher</a></span>&#8203;(<a href="../../ControlDispatcher.html" title="interface in com.google.android.exoplayer2">ControlDispatcher</a>&nbsp;controlDispatcher)</code></th>
-<td class="colLast">
-<div class="block"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use a <a href="../../ForwardingPlayer.html" title="class in com.google.android.exoplayer2"><code>ForwardingPlayer</code></a> and pass it to the constructor instead.</div>
-</div>
-</td>
-</tr>
-<tr id="i26" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setMediaItem(androidx.media2.common.MediaItem)">setMediaItem</a></span>&#8203;(androidx.media2.common.MediaItem&nbsp;item)</code></th>
 </tr>
-<tr id="i27" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i26" class="altColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setPlaybackSpeed(float)">setPlaybackSpeed</a></span>&#8203;(float&nbsp;playbackSpeed)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i28" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i27" class="rowColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setPlaylist(java.util.List,androidx.media2.common.MediaMetadata)">setPlaylist</a></span>&#8203;(<a href="https://developer.android.com/reference/java/util/List.html" title="class or interface in java.util" class="externalLink" target="_top">List</a>&lt;androidx.media2.common.MediaItem&gt;&nbsp;playlist,
            androidx.media2.common.MediaMetadata&nbsp;metadata)</code></th>
 </tr>
-<tr id="i29" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i28" class="altColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setRepeatMode(int)">setRepeatMode</a></span>&#8203;(int&nbsp;repeatMode)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i30" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i29" class="rowColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#setShuffleMode(int)">setShuffleMode</a></span>&#8203;(int&nbsp;shuffleMode)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i31" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i30" class="altColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#skipToNextPlaylistItem()">skipToNextPlaylistItem</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i32" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i31" class="rowColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#skipToPlaylistItem(int)">skipToPlaylistItem</a></span>&#8203;(int&nbsp;index)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i33" class="rowColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i32" class="altColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#skipToPreviousPlaylistItem()">skipToPreviousPlaylistItem</a></span>()</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
-<tr id="i34" class="altColor">
-<td class="colFirst"><code><a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
+<tr id="i33" class="rowColor">
+<td class="colFirst"><code><a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;</code></td>
 <th class="colSecond" scope="row"><code><span class="memberNameLink"><a href="#updatePlaylistMetadata(androidx.media2.common.MediaMetadata)">updatePlaylistMetadata</a></span>&#8203;(androidx.media2.common.MediaMetadata&nbsp;metadata)</code></th>
 <td class="colLast">&nbsp;</td>
 </tr>
@@ -483,28 +474,13 @@ extends androidx.media2.common.SessionPlayer</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a id="setControlDispatcher(com.google.android.exoplayer2.ControlDispatcher)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setControlDispatcher</h4>
-<pre class="methodSignature"><a href="https://developer.android.com/reference/java/lang/Deprecated.html" title="class or interface in java.lang" class="externalLink" target="_top">@Deprecated</a>
-public&nbsp;void&nbsp;setControlDispatcher&#8203;(<a href="../../ControlDispatcher.html" title="interface in com.google.android.exoplayer2">ControlDispatcher</a>&nbsp;controlDispatcher)</pre>
-<div class="deprecationBlock"><span class="deprecatedLabel">Deprecated.</span>
-<div class="deprecationComment">Use a <a href="../../ForwardingPlayer.html" title="class in com.google.android.exoplayer2"><code>ForwardingPlayer</code></a> and pass it to the constructor instead. You can also
-     customize some operations when configuring the player (for example by using <code>
-     SimpleExoPlayer.Builder#setSeekBackIncrementMs(long)</code>).</div>
-</div>
-</li>
-</ul>
 <a id="play()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>play</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;play()</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;play()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>play</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -517,7 +493,7 @@ public&nbsp;void&nbsp;setControlDispatcher&#8203;(<a href="../../ControlDispatch
 <ul class="blockList">
 <li class="blockList">
 <h4>pause</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;pause()</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;pause()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>pause</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -530,7 +506,7 @@ public&nbsp;void&nbsp;setControlDispatcher&#8203;(<a href="../../ControlDispatch
 <ul class="blockList">
 <li class="blockList">
 <h4>prepare</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;prepare()</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;prepare()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>prepare</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -543,7 +519,7 @@ public&nbsp;void&nbsp;setControlDispatcher&#8203;(<a href="../../ControlDispatch
 <ul class="blockList">
 <li class="blockList">
 <h4>seekTo</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;seekTo&#8203;(long&nbsp;position)</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;seekTo&#8203;(long&nbsp;position)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>seekTo</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -556,7 +532,7 @@ public&nbsp;void&nbsp;setControlDispatcher&#8203;(<a href="../../ControlDispatch
 <ul class="blockList">
 <li class="blockList">
 <h4>setPlaybackSpeed</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setPlaybackSpeed&#8203;(@FloatRange(from=0.0,to=3.4028234663852886E38,fromInclusive=false)
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setPlaybackSpeed&#8203;(@FloatRange(from=0.0,to=3.4028234663852886E38,fromInclusive=false)
                                                                                             float&nbsp;playbackSpeed)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -570,7 +546,7 @@ public&nbsp;void&nbsp;setControlDispatcher&#8203;(<a href="../../ControlDispatch
 <ul class="blockList">
 <li class="blockList">
 <h4>setAudioAttributes</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setAudioAttributes&#8203;(androidx.media.AudioAttributesCompat&nbsp;attr)</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setAudioAttributes&#8203;(androidx.media.AudioAttributesCompat&nbsp;attr)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>setAudioAttributes</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -678,7 +654,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setMediaItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setMediaItem&#8203;(androidx.media2.common.MediaItem&nbsp;item)</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setMediaItem&#8203;(androidx.media2.common.MediaItem&nbsp;item)</pre>
 <div class="block">
 
  <p><code>FileMediaItem</code> and <code>CallbackMediaItem</code> are not supported.</div>
@@ -694,7 +670,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setPlaylist</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setPlaylist&#8203;(<a href="https://developer.android.com/reference/java/util/List.html" title="class or interface in java.util" class="externalLink" target="_top">List</a>&lt;androidx.media2.common.MediaItem&gt;&nbsp;playlist,
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setPlaylist&#8203;(<a href="https://developer.android.com/reference/java/util/List.html" title="class or interface in java.util" class="externalLink" target="_top">List</a>&lt;androidx.media2.common.MediaItem&gt;&nbsp;playlist,
                                                                                        @Nullable
                                                                                        androidx.media2.common.MediaMetadata&nbsp;metadata)</pre>
 <div class="block">
@@ -712,7 +688,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addPlaylistItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;addPlaylistItem&#8203;(int&nbsp;index,
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;addPlaylistItem&#8203;(int&nbsp;index,
                                                                                            androidx.media2.common.MediaItem&nbsp;item)</pre>
 <div class="block">
 
@@ -729,7 +705,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>removePlaylistItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;removePlaylistItem&#8203;(@IntRange(from=0L)
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;removePlaylistItem&#8203;(@IntRange(from=0L)
                                                                                               int&nbsp;index)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -743,7 +719,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>replacePlaylistItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;replacePlaylistItem&#8203;(int&nbsp;index,
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;replacePlaylistItem&#8203;(int&nbsp;index,
                                                                                                androidx.media2.common.MediaItem&nbsp;item)</pre>
 <div class="block">
 
@@ -760,7 +736,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>movePlaylistItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;movePlaylistItem&#8203;(int&nbsp;fromIndex,
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;movePlaylistItem&#8203;(int&nbsp;fromIndex,
                                                                                             int&nbsp;toIndex)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
@@ -774,7 +750,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>skipToPreviousPlaylistItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;skipToPreviousPlaylistItem()</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;skipToPreviousPlaylistItem()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>skipToPreviousPlaylistItem</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -787,7 +763,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>skipToNextPlaylistItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;skipToNextPlaylistItem()</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;skipToNextPlaylistItem()</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>skipToNextPlaylistItem</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -800,7 +776,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>skipToPlaylistItem</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;skipToPlaylistItem&#8203;(@IntRange(from=0L)
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;skipToPlaylistItem&#8203;(@IntRange(from=0L)
                                                                                               int&nbsp;index)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -814,7 +790,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>updatePlaylistMetadata</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;updatePlaylistMetadata&#8203;(@Nullable
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;updatePlaylistMetadata&#8203;(@Nullable
                                                                                                   androidx.media2.common.MediaMetadata&nbsp;metadata)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
@@ -828,7 +804,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setRepeatMode</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setRepeatMode&#8203;(int&nbsp;repeatMode)</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setRepeatMode&#8203;(int&nbsp;repeatMode)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>setRepeatMode</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>
@@ -841,7 +817,7 @@ public&nbsp;androidx.media.AudioAttributesCompat&nbsp;getAudioAttributes()</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setShuffleMode</h4>
-<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/27.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setShuffleMode&#8203;(int&nbsp;shuffleMode)</pre>
+<pre class="methodSignature">public&nbsp;<a href="https://guava.dev/releases/31.0.1-android/api/docs/com/google/common/util/concurrent/ListenableFuture.html?is-external=true" title="class or interface in com.google.common.util.concurrent" class="externalLink">ListenableFuture</a>&lt;androidx.media2.common.SessionPlayer.PlayerResult&gt;&nbsp;setShuffleMode&#8203;(int&nbsp;shuffleMode)</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>setShuffleMode</code>&nbsp;in class&nbsp;<code>androidx.media2.common.SessionPlayer</code></dd>

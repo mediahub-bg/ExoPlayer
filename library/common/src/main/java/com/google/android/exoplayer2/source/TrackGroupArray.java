@@ -15,14 +15,26 @@
  */
 package com.google.android.exoplayer2.source;
 
-import android.os.Parcel;
-import android.os.Parcelable;
+import static java.lang.annotation.ElementType.TYPE_USE;
+
+import android.os.Bundle;
+import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
+import com.google.android.exoplayer2.Bundleable;
 import com.google.android.exoplayer2.C;
-import java.util.Arrays;
+import com.google.android.exoplayer2.util.BundleableUtil;
+import com.google.android.exoplayer2.util.Log;
+import com.google.common.collect.ImmutableList;
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.List;
 
 /** An immutable array of {@link TrackGroup}s. */
-public final class TrackGroupArray implements Parcelable {
+public final class TrackGroupArray implements Bundleable {
+
+  private static final String TAG = "TrackGroupArray";
 
   /** The empty array. */
   public static final TrackGroupArray EMPTY = new TrackGroupArray();
@@ -30,23 +42,20 @@ public final class TrackGroupArray implements Parcelable {
   /** The number of groups in the array. Greater than or equal to zero. */
   public final int length;
 
-  private final TrackGroup[] trackGroups;
+  private final ImmutableList<TrackGroup> trackGroups;
 
   // Lazily initialized hashcode.
   private int hashCode;
 
-  /** @param trackGroups The groups. May be empty. */
+  /**
+   * Construct a {@code TrackGroupArray} from an array of {@link TrackGroup TrackGroups}.
+   *
+   * <p>The groups must not contain duplicates.
+   */
   public TrackGroupArray(TrackGroup... trackGroups) {
-    this.trackGroups = trackGroups;
+    this.trackGroups = ImmutableList.copyOf(trackGroups);
     this.length = trackGroups.length;
-  }
-
-  /* package */ TrackGroupArray(Parcel in) {
-    length = in.readInt();
-    trackGroups = new TrackGroup[length];
-    for (int i = 0; i < length; i++) {
-      trackGroups[i] = in.readParcelable(TrackGroup.class.getClassLoader());
-    }
+    verifyCorrectness();
   }
 
   /**
@@ -56,7 +65,7 @@ public final class TrackGroupArray implements Parcelable {
    * @return The group.
    */
   public TrackGroup get(int index) {
-    return trackGroups[index];
+    return trackGroups.get(index);
   }
 
   /**
@@ -65,16 +74,9 @@ public final class TrackGroupArray implements Parcelable {
    * @param group The group.
    * @return The index of the group, or {@link C#INDEX_UNSET} if no such group exists.
    */
-  @SuppressWarnings("ReferenceEquality")
   public int indexOf(TrackGroup group) {
-    for (int i = 0; i < length; i++) {
-      // Suppressed reference equality warning because this is looking for the index of a specific
-      // TrackGroup object, not the index of a potential equal TrackGroup.
-      if (trackGroups[i] == group) {
-        return i;
-      }
-    }
-    return C.INDEX_UNSET;
+    int index = trackGroups.indexOf(group);
+    return index >= 0 ? index : C.INDEX_UNSET;
   }
 
   /** Returns whether this track group array is empty. */
@@ -85,7 +87,7 @@ public final class TrackGroupArray implements Parcelable {
   @Override
   public int hashCode() {
     if (hashCode == 0) {
-      hashCode = Arrays.hashCode(trackGroups);
+      hashCode = trackGroups.hashCode();
     }
     return hashCode;
   }
@@ -99,35 +101,55 @@ public final class TrackGroupArray implements Parcelable {
       return false;
     }
     TrackGroupArray other = (TrackGroupArray) obj;
-    return length == other.length && Arrays.equals(trackGroups, other.trackGroups);
+    return length == other.length && trackGroups.equals(other.trackGroups);
   }
 
-  // Parcelable implementation.
+  // Bundleable implementation.
+
+  @Documented
+  @Retention(RetentionPolicy.SOURCE)
+  @Target(TYPE_USE)
+  @IntDef({
+    FIELD_TRACK_GROUPS,
+  })
+  private @interface FieldNumber {}
+
+  private static final int FIELD_TRACK_GROUPS = 0;
 
   @Override
-  public int describeContents() {
-    return 0;
+  public Bundle toBundle() {
+    Bundle bundle = new Bundle();
+    bundle.putParcelableArrayList(
+        keyForField(FIELD_TRACK_GROUPS), BundleableUtil.toBundleArrayList(trackGroups));
+    return bundle;
   }
 
-  @Override
-  public void writeToParcel(Parcel dest, int flags) {
-    dest.writeInt(length);
-    for (int i = 0; i < length; i++) {
-      dest.writeParcelable(trackGroups[i], 0);
+  /** Object that can restores a TrackGroupArray from a {@link Bundle}. */
+  public static final Creator<TrackGroupArray> CREATOR =
+      bundle -> {
+        List<TrackGroup> trackGroups =
+            BundleableUtil.fromBundleNullableList(
+                TrackGroup.CREATOR,
+                bundle.getParcelableArrayList(keyForField(FIELD_TRACK_GROUPS)),
+                /* defaultValue= */ ImmutableList.of());
+        return new TrackGroupArray(trackGroups.toArray(new TrackGroup[0]));
+      };
+
+  private void verifyCorrectness() {
+    for (int i = 0; i < trackGroups.size(); i++) {
+      for (int j = i + 1; j < trackGroups.size(); j++) {
+        if (trackGroups.get(i).equals(trackGroups.get(j))) {
+          Log.e(
+              TAG,
+              "",
+              new IllegalArgumentException(
+                  "Multiple identical TrackGroups added to one TrackGroupArray."));
+        }
+      }
     }
   }
 
-  public static final Parcelable.Creator<TrackGroupArray> CREATOR =
-      new Parcelable.Creator<TrackGroupArray>() {
-
-        @Override
-        public TrackGroupArray createFromParcel(Parcel in) {
-          return new TrackGroupArray(in);
-        }
-
-        @Override
-        public TrackGroupArray[] newArray(int size) {
-          return new TrackGroupArray[size];
-        }
-      };
+  private static String keyForField(@FieldNumber int field) {
+    return Integer.toString(field, Character.MAX_RADIX);
+  }
 }

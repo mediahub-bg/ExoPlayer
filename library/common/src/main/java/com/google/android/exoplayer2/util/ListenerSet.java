@@ -22,7 +22,7 @@ import androidx.annotation.Nullable;
 import com.google.android.exoplayer2.C;
 import java.util.ArrayDeque;
 import java.util.concurrent.CopyOnWriteArraySet;
-import javax.annotation.Nonnull;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 /**
  * A set of listeners.
@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
  *
  * @param <T> The listener type.
  */
-public final class ListenerSet<T> {
+public final class ListenerSet<T extends @NonNull Object> {
 
   /**
    * An event sent to a listener.
@@ -116,6 +116,21 @@ public final class ListenerSet<T> {
    */
   @CheckResult
   public ListenerSet<T> copy(Looper looper, IterationFinishedEvent<T> iterationFinishedEvent) {
+    return copy(looper, clock, iterationFinishedEvent);
+  }
+
+  /**
+   * Copies the listener set.
+   *
+   * @param looper The new {@link Looper} for the copied listener set.
+   * @param clock The new {@link Clock} for the copied listener set.
+   * @param iterationFinishedEvent The new {@link IterationFinishedEvent} sent when all other events
+   *     sent during one {@link Looper} message queue iteration were handled by the listeners.
+   * @return The copied listener set.
+   */
+  @CheckResult
+  public ListenerSet<T> copy(
+      Looper looper, Clock clock, IterationFinishedEvent<T> iterationFinishedEvent) {
     return new ListenerSet<>(listeners, looper, clock, iterationFinishedEvent);
   }
 
@@ -148,6 +163,11 @@ public final class ListenerSet<T> {
         listeners.remove(listenerHolder);
       }
     }
+  }
+
+  /** Removes all listeners from the set. */
+  public void clear() {
+    listeners.clear();
   }
 
   /** Returns the number of added listeners. */
@@ -232,15 +252,15 @@ public final class ListenerSet<T> {
     return true;
   }
 
-  private static final class ListenerHolder<T> {
+  private static final class ListenerHolder<T extends @NonNull Object> {
 
-    @Nonnull public final T listener;
+    public final T listener;
 
     private FlagSet.Builder flagsBuilder;
     private boolean needsIterationFinishedEvent;
     private boolean released;
 
-    public ListenerHolder(@Nonnull T listener) {
+    public ListenerHolder(T listener) {
       this.listener = listener;
       this.flagsBuilder = new FlagSet.Builder();
     }

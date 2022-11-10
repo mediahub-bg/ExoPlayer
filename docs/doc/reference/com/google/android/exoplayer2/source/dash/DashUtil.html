@@ -284,7 +284,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <dd><code>representation</code> - The <a href="manifest/Representation.html" title="class in com.google.android.exoplayer2.source.dash.manifest"><code>Representation</code></a> to which the request belongs.</dd>
 <dd><code>baseUrl</code> - The base url with which to resolve the request URI.</dd>
 <dd><code>requestUri</code> - The <a href="manifest/RangedUri.html" title="class in com.google.android.exoplayer2.source.dash.manifest"><code>RangedUri</code></a> of the data to request.</dd>
-<dd><code>flags</code> - Flags to be set on the returned <a href="../../upstream/DataSpec.html" title="class in com.google.android.exoplayer2.upstream"><code>DataSpec</code></a>. See <a href="../../upstream/DataSpec.Builder.html#setFlags(int)"><code>DataSpec.Builder.setFlags(int)</code></a>.</dd>
+<dd><code>flags</code> - Flags to be set on the returned <a href="../../upstream/DataSpec.html" title="class in com.google.android.exoplayer2.upstream"><code>DataSpec</code></a>. See <a href="../../upstream/DataSpec.Builder.html#setFlags(@com.google.android.exoplayer2.upstream.DataSpec.Flagsint)"><code>DataSpec.Builder.setFlags(int)</code></a>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The <a href="../../upstream/DataSpec.html" title="class in com.google.android.exoplayer2.upstream"><code>DataSpec</code></a>.</dd>
 </dl>
@@ -306,7 +306,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html" 
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>representation</code> - The <a href="manifest/Representation.html" title="class in com.google.android.exoplayer2.source.dash.manifest"><code>Representation</code></a> to which the request belongs.</dd>
 <dd><code>requestUri</code> - The <a href="manifest/RangedUri.html" title="class in com.google.android.exoplayer2.source.dash.manifest"><code>RangedUri</code></a> of the data to request.</dd>
-<dd><code>flags</code> - Flags to be set on the returned <a href="../../upstream/DataSpec.html" title="class in com.google.android.exoplayer2.upstream"><code>DataSpec</code></a>. See <a href="../../upstream/DataSpec.Builder.html#setFlags(int)"><code>DataSpec.Builder.setFlags(int)</code></a>.</dd>
+<dd><code>flags</code> - Flags to be set on the returned <a href="../../upstream/DataSpec.html" title="class in com.google.android.exoplayer2.upstream"><code>DataSpec</code></a>. See <a href="../../upstream/DataSpec.Builder.html#setFlags(@com.google.android.exoplayer2.upstream.DataSpec.Flagsint)"><code>DataSpec.Builder.setFlags(int)</code></a>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The <a href="../../upstream/DataSpec.html" title="class in com.google.android.exoplayer2.upstream"><code>DataSpec</code></a>.</dd>
 </dl>
@@ -371,7 +371,7 @@ public static&nbsp;<a href="../../Format.html" title="class in com.google.androi
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dataSource</code> - The source from which the data should be loaded.</dd>
-<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
+<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>com.google.android.exoplayer2.C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
 <dd><code>representation</code> - The representation which initialization chunk belongs to.</dd>
 <dd><code>baseUrlIndex</code> - The index of the base URL to be picked from the <a href="manifest/Representation.html#baseUrls"><code>list of base URLs</code></a>.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -398,7 +398,7 @@ public static&nbsp;<a href="../../Format.html" title="class in com.google.androi
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dataSource</code> - The source from which the data should be loaded.</dd>
-<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
+<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>com.google.android.exoplayer2.C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
 <dd><code>representation</code> - The representation which initialization chunk belongs to.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the sample <a href="../../Format.html" title="class in com.google.android.exoplayer2"><code>Format</code></a> of the given representation.</dd>
@@ -423,7 +423,7 @@ public static&nbsp;<a href="../../extractor/ChunkIndex.html" title="class in com
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dataSource</code> - The source from which the data should be loaded.</dd>
-<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
+<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>com.google.android.exoplayer2.C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
 <dd><code>representation</code> - The representation which initialization chunk belongs to.</dd>
 <dd><code>baseUrlIndex</code> - The index of the base URL with which to resolve the request URI.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
@@ -451,7 +451,7 @@ public static&nbsp;<a href="../../extractor/ChunkIndex.html" title="class in com
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>dataSource</code> - The source from which the data should be loaded.</dd>
-<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
+<dd><code>trackType</code> - The type of the representation. Typically one of the <a href="../../C.html" title="class in com.google.android.exoplayer2"><code>com.google.android.exoplayer2.C</code></a> <code>TRACK_TYPE_*</code> constants.</dd>
 <dd><code>representation</code> - The representation which initialization chunk belongs to.</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>The <a href="../../extractor/ChunkIndex.html" title="class in com.google.android.exoplayer2.extractor"><code>ChunkIndex</code></a> of the given representation, or null if no initialization or

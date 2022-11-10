@@ -23,11 +23,11 @@ import android.os.SystemClock;
 import android.view.Surface;
 import android.widget.FrameLayout;
 import androidx.annotation.Nullable;
+import androidx.annotation.Size;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.analytics.AnalyticsListener;
 import com.google.android.exoplayer2.audio.DefaultAudioSink;
 import com.google.android.exoplayer2.decoder.DecoderCounters;
@@ -66,7 +66,7 @@ public abstract class ExoHostedTest implements AnalyticsListener, HostedTest {
   private final ConditionVariable testFinished;
 
   @Nullable private ActionSchedule pendingSchedule;
-  private @MonotonicNonNull SimpleExoPlayer player;
+  private @MonotonicNonNull ExoPlayer player;
   private @MonotonicNonNull HandlerWrapper actionHandler;
   private @MonotonicNonNull DefaultTrackSelector trackSelector;
   private @MonotonicNonNull Surface surface;
@@ -83,7 +83,7 @@ public abstract class ExoHostedTest implements AnalyticsListener, HostedTest {
    *     was within {@link #MAX_PLAYING_TIME_DISCREPANCY_MS} of the media duration. If set to false,
    *     the test will not assert an expected playing time.
    */
-  public ExoHostedTest(String tag, boolean fullPlaybackNoSeeking) {
+  public ExoHostedTest(@Size(max = 23) String tag, boolean fullPlaybackNoSeeking) {
     this(
         tag,
         fullPlaybackNoSeeking
@@ -103,7 +103,8 @@ public abstract class ExoHostedTest implements AnalyticsListener, HostedTest {
    *     an expected playing time.
    * @param failOnPlayerError Whether a player error should be considered a test failure.
    */
-  public ExoHostedTest(String tag, long expectedPlayingTimeMs, boolean failOnPlayerError) {
+  public ExoHostedTest(
+      @Size(max = 23) String tag, long expectedPlayingTimeMs, boolean failOnPlayerError) {
     this.tag = tag;
     this.expectedPlayingTimeMs = expectedPlayingTimeMs;
     this.failOnPlayerError = failOnPlayerError;
@@ -242,13 +243,13 @@ public abstract class ExoHostedTest implements AnalyticsListener, HostedTest {
     return new DefaultTrackSelector(host);
   }
 
-  protected SimpleExoPlayer buildExoPlayer(
+  protected ExoPlayer buildExoPlayer(
       HostActivity host, Surface surface, MappingTrackSelector trackSelector) {
     DefaultRenderersFactory renderersFactory = new DefaultRenderersFactory(host);
     renderersFactory.setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_OFF);
     renderersFactory.setAllowedVideoJoiningTimeMs(/* allowedVideoJoiningTimeMs= */ 0);
-    SimpleExoPlayer player =
-        new SimpleExoPlayer.Builder(host, renderersFactory).setTrackSelector(trackSelector).build();
+    ExoPlayer player =
+        new ExoPlayer.Builder(host, renderersFactory).setTrackSelector(trackSelector).build();
     player.setVideoSurface(surface);
     return player;
   }

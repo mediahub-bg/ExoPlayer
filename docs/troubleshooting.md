@@ -6,7 +6,7 @@ redirect_from:
 ---
 
 * [Fixing "Cleartext HTTP traffic not permitted" errors][]
-* [Fixing "SSLHandshakeException" and "CertPathValidatorException" errors][]
+* [Fixing "SSLHandshakeException", "CertPathValidatorException" and "ERR_CERT_AUTHORITY_INVALID" errors][]
 * [Why are some media files not seekable?][]
 * [Why is seeking inaccurate in some MP3 files?][]
 * [Why do some MPEG-TS files fail to play?][]
@@ -43,11 +43,11 @@ The ExoPlayer demo app uses the default Network Security Configuration, and so
 does not allow cleartext HTTP traffic. You can enable it using the instructions
 above.
 
-#### Fixing "SSLHandshakeException" and "CertPathValidatorException" errors ####
+#### Fixing "SSLHandshakeException", "CertPathValidatorException" and "ERR_CERT_AUTHORITY_INVALID" errors ####
 
-`SSLHandshakeException` and `CertPathValidatorException` both indicate a problem
-with the server's SSL certificate. These errors are not ExoPlayer specific.
-Please see
+`SSLHandshakeException`, `CertPathValidatorException` and
+`ERR_CERT_AUTHORITY_INVALID` all indicate a problem with the server's SSL
+certificate. These errors are not ExoPlayer specific. Please see
 [Android's SSL documentation](https://developer.android.com/training/articles/security-ssl#CommonProblems)
 for more details.
 
@@ -164,7 +164,7 @@ from HTTPS to HTTP and so is a cross-protocol redirect. ExoPlayer will not
 follow this redirect in its default configuration, meaning playback will fail.
 
 If you need to, you can configure ExoPlayer to follow cross-protocol redirects
-when instantiating `DefaultHttpDataSourceFactory` instances used in your
+when instantiating [`DefaultHttpDataSource.Factory`][] instances used in your
 application. Learn about selecting and configuring the network stack
 [here]({{ site.base_url }}/customization.html#configuring-the-network-stack).
 
@@ -230,7 +230,7 @@ audio when your app is in the background:
    from killing your process to free up resources.
 1. You need to hold a [`WifiLock`][] and a [`WakeLock`][]. These ensure that the
    system keeps the WiFi radio and CPU awake. This can be easily done if using
-   [`SimpleExoPlayer`][] by calling [`setWakeMode`][], which will automatically
+   [`ExoPlayer`][] by calling [`setWakeMode`][], which will automatically
    acquire and release the required locks at the correct times.
 
 It's important that you release the locks (if not using `setWakeMode`) and stop
@@ -294,7 +294,7 @@ Android Player API](https://developers.google.com/youtube/android/player/) which
 is the official way to play YouTube videos on Android.
 
 [Fixing "Cleartext HTTP traffic not permitted" errors]: #fixing-cleartext-http-traffic-not-permitted-errors
-[Fixing "SSLHandshakeException" and "CertPathValidatorException" errors]: #fixing-sslhandshakeexception-and-certpathvalidatorexception-errors
+[Fixing "SSLHandshakeException", "CertPathValidatorException" and "ERR_CERT_AUTHORITY_INVALID" errors]: #fixing-sslhandshakeexception-certpathvalidatorexception-and-err_cert_authority_invalid-errors
 [What formats does ExoPlayer support?]: #what-formats-does-exoplayer-support
 [Why are some media files not seekable?]: #why-are-some-media-files-not-seekable
 [Why is seeking inaccurate in some MP3 files?]: #why-is-seeking-inaccurate-in-some-mp3-files
@@ -326,7 +326,7 @@ is the official way to play YouTube videos on Android.
 [`setFragmentedMp4ExtractorFlags`]: {{ site.exo_sdk }}/extractor/DefaultExtractorsFactory#setFragmentedMp4ExtractorFlags(int)
 [Wikipedia]: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
 [wget]: https://www.gnu.org/software/wget/manual/wget.html
-[`DefaultHttpDataSourceFactory`]: {{ site.exo_sdk }}/upstream/DefaultHttpDataSourceFactory.html
+[`DefaultHttpDataSource.Factory`]: {{ site.exo_sdk }}/upstream/DefaultHttpDataSource.Factory.html
 [ExoPlayer module]: {{ site.base_url }}/hello-world.html#add-exoplayer-modules
 [issue tracker]: https://github.com/google/ExoPlayer/issues
 [`isCurrentWindowLive`]: {{ site.exo_sdk }}/Player.html#isCurrentWindowLive()
@@ -335,8 +335,8 @@ is the official way to play YouTube videos on Android.
 [foreground service]: https://developer.android.com/guide/components/services.html#Foreground
 [`WifiLock`]: {{ site.android_sdk }}/android/net/wifi/WifiManager.WifiLock.html
 [`WakeLock`]: {{ site.android_sdk }}/android/os/PowerManager.WakeLock.html
-[`SimpleExoPlayer`]: {{ site.exo_sdk }}/SimpleExoPlayer.html
-[`setWakeMode`]: {{ site.exo_sdk }}/SimpleExoPlayer.html#setWakeMode(int)
+[`ExoPlayer`]: {{ site.exo_sdk }}/ExoPlayer.html
+[`setWakeMode`]: {{ site.exo_sdk }}/ExoPlayer.html#setWakeMode(int)
 [A note on threading]: {{ site.base_url }}/hello-world.html#a-note-on-threading
 [OkHttp extension]: {{ site.release_v2 }}/extensions/okhttp
 [CORS enabled]: https://www.w3.org/wiki/CORS_Enabled
