@@ -72,10 +72,10 @@ afterEvaluate {
                 from components.release
                 artifact androidSourcesJar
                 groupId = 'com.eu.mediahub.android.exoplayer'
-                artifactId = releaseArtifact
+                artifactId = releaseArtifactId
                 version releaseVersion
                 pom {
-                    name = releaseArtifact
+                    name = releaseArtifactId
                     description = releaseDescription
                     url = 'https://github.com/mediahub-bg/ExoPlayer'
                     licenses {
