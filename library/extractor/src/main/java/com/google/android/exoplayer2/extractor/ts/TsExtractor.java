@@ -18,6 +18,7 @@ package com.google.android.exoplayer2.extractor.ts;
 import static com.google.android.exoplayer2.extractor.ts.TsPayloadReader.FLAG_PAYLOAD_UNIT_START_INDICATOR;
 import static java.lang.annotation.ElementType.TYPE_USE;
 
+import android.util.Pair;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.util.SparseIntArray;
@@ -115,6 +116,73 @@ public final class TsExtractor implements Extractor {
 
   private static final int BUFFER_SIZE = TS_PACKET_SIZE * 50;
   private static final int SNIFF_TS_PACKET_COUNT = 5;
+
+  private static final int TRACK_ID_STREAM_TYPE_MPA_MIN = 0x200;
+  private static final int TRACK_ID_STREAM_TYPE_MPA_MAX = 0x213;
+  private static final int TRACK_ID_STREAM_TYPE_MPA_LSF_MIN = 0x214;
+  private static final int TRACK_ID_STREAM_TYPE_MPA_LSF_MAX = 0x227;
+  private static final int TRACK_ID_STREAM_TYPE_AAC_ADTS_MIN = 0x228;
+  private static final int TRACK_ID_STREAM_TYPE_AAC_ADTS_MAX = 0x23b;
+  private static final int TRACK_ID_STREAM_TYPE_AAC_LATM_MIN = 0x23c;
+  private static final int TRACK_ID_STREAM_TYPE_AAC_LATM_MAX = 0x24f;
+  private static final int TRACK_ID_STREAM_TYPE_AC3_MIN = 0x250;
+  private static final int TRACK_ID_STREAM_TYPE_AC3_MAX = 0x263;
+  private static final int TRACK_ID_STREAM_TYPE_DTS_MIN = 0x264;
+  private static final int TRACK_ID_STREAM_TYPE_DTS_MAX = 0x277;
+  private static final int TRACK_ID_STREAM_TYPE_HDMV_DTS_MIN = 0x278;
+  private static final int TRACK_ID_STREAM_TYPE_HDMV_DTS_MAX = 0x28b;
+  private static final int TRACK_ID_STREAM_TYPE_E_AC3_MIN = 0x28c;
+  private static final int TRACK_ID_STREAM_TYPE_E_AC3_MAX = 0x29f;
+  private static final int TRACK_ID_STREAM_TYPE_H262_MIN = 0x100;
+  private static final int TRACK_ID_STREAM_TYPE_H262_MAX = 0x109;
+  private static final int TRACK_ID_STREAM_TYPE_H264_MIN = 0x10A;
+  private static final int TRACK_ID_STREAM_TYPE_H264_MAX = 0x113;
+  private static final int TRACK_ID_STREAM_TYPE_H265_MIN = 0x114;
+  private static final int TRACK_ID_STREAM_TYPE_H265_MAX = 0x11d;
+  private static final int TRACK_ID_STREAM_TYPE_DVBSUBS_MIN = 0x300;
+  private static final int TRACK_ID_STREAM_TYPE_DVBSUBS_MAX = 0x309;
+
+  private static final SparseArray<Pair<Integer, Integer>> streamTypeToTrackIdMinMaxValue;
+
+  static {
+    streamTypeToTrackIdMinMaxValue = new SparseArray<>();
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_MPA,
+        new Pair<>(TRACK_ID_STREAM_TYPE_MPA_MIN, TRACK_ID_STREAM_TYPE_MPA_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_MPA_LSF,
+        new Pair<>(TRACK_ID_STREAM_TYPE_MPA_LSF_MIN, TRACK_ID_STREAM_TYPE_MPA_LSF_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_AAC_ADTS,
+        new Pair<>(TRACK_ID_STREAM_TYPE_AAC_ADTS_MIN, TRACK_ID_STREAM_TYPE_AAC_ADTS_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_AAC_LATM,
+        new Pair<>(TRACK_ID_STREAM_TYPE_AAC_LATM_MIN, TRACK_ID_STREAM_TYPE_AAC_LATM_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_AC3,
+        new Pair<>(TRACK_ID_STREAM_TYPE_AC3_MIN, TRACK_ID_STREAM_TYPE_AC3_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_DTS,
+        new Pair<>(TRACK_ID_STREAM_TYPE_DTS_MIN, TRACK_ID_STREAM_TYPE_DTS_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_HDMV_DTS,
+        new Pair<>(TRACK_ID_STREAM_TYPE_HDMV_DTS_MIN, TRACK_ID_STREAM_TYPE_HDMV_DTS_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_E_AC3,
+        new Pair<>(TRACK_ID_STREAM_TYPE_E_AC3_MIN, TRACK_ID_STREAM_TYPE_E_AC3_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_H262,
+        new Pair<>(TRACK_ID_STREAM_TYPE_H262_MIN, TRACK_ID_STREAM_TYPE_H262_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_H264,
+        new Pair<>(TRACK_ID_STREAM_TYPE_H264_MIN, TRACK_ID_STREAM_TYPE_H264_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_H265,
+        new Pair<>(TRACK_ID_STREAM_TYPE_H265_MIN, TRACK_ID_STREAM_TYPE_H265_MAX));
+    streamTypeToTrackIdMinMaxValue.put(
+        TS_STREAM_TYPE_DVBSUBS,
+        new Pair<>(TRACK_ID_STREAM_TYPE_DVBSUBS_MIN, TRACK_ID_STREAM_TYPE_DVBSUBS_MAX));
+  }
 
   private final @Mode int mode;
   private final int timestampSearchBytes;
@@ -560,10 +628,13 @@ public final class TsExtractor implements Extractor {
     private final SparseIntArray trackIdToPidScratch;
     private final int pid;
 
+    private final SparseArray<TrackIdGenerator> streamTypeToTrackId;
+
     public PmtReader(int pid) {
       pmtScratch = new ParsableBitArray(new byte[5]);
       trackIdToReaderScratch = new SparseArray<>();
       trackIdToPidScratch = new SparseIntArray();
+      streamTypeToTrackId = new SparseArray<>();
       this.pid = pid;
     }
 
@@ -635,6 +706,7 @@ public final class TsExtractor implements Extractor {
 
       trackIdToReaderScratch.clear();
       trackIdToPidScratch.clear();
+      streamTypeToTrackId.clear();
       int remainingEntriesLength = sectionData.bytesLeft();
       while (remainingEntriesLength > 0) {
         sectionData.readBytes(pmtScratch, 5);
@@ -649,7 +721,10 @@ public final class TsExtractor implements Extractor {
         }
         remainingEntriesLength -= esInfoLength + 5;
 
-        int trackId = mode == MODE_HLS ? streamType : elementaryPid;
+        int trackId = mode == MODE_HLS ? getTrackId(streamType) : elementaryPid;
+        if (trackId == -1) {
+          continue;
+        }
         if (trackIds.get(trackId)) {
           continue;
         }
@@ -772,6 +847,22 @@ public final class TsExtractor implements Extractor {
           language,
           dvbSubtitleInfos,
           Arrays.copyOfRange(data.getData(), descriptorsStartPosition, descriptorsEndPosition));
+    }
+
+    private int getTrackId(int streamType) {
+      Pair<Integer, Integer> trackIdMinMax = streamTypeToTrackIdMinMaxValue.get(streamType);
+      if (trackIdMinMax == null)
+        return -1;
+
+      TrackIdGenerator trackIdGenerator = streamTypeToTrackId.get(streamType);
+      if (trackIdGenerator == null) {
+        trackIdGenerator = new TrackIdGenerator(trackIdMinMax.first, 1);
+        streamTypeToTrackId.put(streamType, trackIdGenerator);
+      }
+
+      trackIdGenerator.generateNewId();
+      int trackId = trackIdGenerator.getTrackId();
+      return ((trackId > trackIdMinMax.second) ? -1 : trackId);
     }
   }
 }
