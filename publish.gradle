@@ -96,6 +96,9 @@ afterEvaluate {
                         connection = 'scm:git:https://github.com/mediahub-bg/ExoPlayer.git'
                         url = 'https://github.com/mediahub-bg/ExoPlayer'
                     }
+                    withXml {
+                        addMissingAarTypeToXml(it)
+                    }
                 }
             }
         }
