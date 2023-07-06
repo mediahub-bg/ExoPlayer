@@ -37,5 +37,5 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.multidex:multidex:' + androidxMultidexVersion
+    androidTestImplementation 'androidx.multidex:multidex:' + androidxMultidexVersion
 }
